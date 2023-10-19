@@ -1,0 +1,10 @@
+.vs
+CMakeFiles/
+DesignTPMS.dir
+x64
+*.vcxproj*
+*.cmake
+*.sln
+CMakeCache.txt
+.ninja_log
+.ninja_deps
