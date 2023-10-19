@@ -45,18 +45,20 @@ Tpms::~Tpms() {}
 //--------- Metodi della classe --------------//
 
 #ifdef USE_FLYING_EDGES
-void Tpms::SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties) {
+void Tpms::SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties, vtkCleanPolyData* cleanpoly) {
 	Volume = volume;
 	Surface = surface;
 	massProperties = massproperties;
+	cleanPoly = cleanpoly;
 }
 #else
 
 
-void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties) {
+void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties, vtkCleanPolyData* cleanpoly) {
 	Volume = volume;
 	Surface = surface;
 	massProperties = massproperties;
+	cleanPoly = cleanpoly;
 }
 #endif
 
@@ -65,7 +67,9 @@ void Tpms::TpmsSet() {
 
 	Volume->ReleaseData();
 
-	int extent[6] = { -1, nPoints * numCellX + 1, -1, nPoints * numCellY + 1, -1, nPoints * numCellZ + 1 };
+	// int extent[6] = { -2, nPoints * numCellX + 2, -2, nPoints * numCellY + 2, -2, nPoints * numCellZ + 2 };
+	int extent[6] = { -1, nPoints * numCellX , -1, nPoints * numCellY , -1, nPoints * numCellZ };
+
 	Volume->SetExtent(extent);
 	Volume->SetOrigin(Origin);
 
@@ -87,6 +91,20 @@ void Tpms::TpmsUpdate(float rstep) {
 				float* a = static_cast<float*> (Volume->GetScalarPointer(x, y, z));
 				*a = *a + rstep;
 			}
+}
+
+void Tpms::TpmsClean() {
+	Surface->RemoveAllInputs();
+	Surface->SetInputData(Volume);
+	Surface->ComputeNormalsOn();
+	Surface->SetValue(0, isoValue);
+	Surface->Update();
+	cleanPoly->SetInputConnection(Surface->GetOutputPort());
+	cleanPoly->ConvertLinesToPointsOn();
+	cleanPoly->ConvertLinesToPointsOn();
+	cleanPoly->ConvertPolysToLinesOn();
+	cleanPoly->ConvertStripsToPolysOn();
+	cleanPoly->Update();
 }
 
 
@@ -120,7 +138,8 @@ double Tpms::TpmsArea() {
 
 void Tpms::TpmsWriteToSTL(const char* filename) {
 	vtkNew<vtkSTLWriter> writer;
-	writer->SetInputData(Surface->GetOutput());
+	// writer->SetInputData(Surface->GetOutput());
+	writer->SetInputData(cleanPoly->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();

@@ -24,6 +24,8 @@
 #include <vtkActor.h>
 #include <vtkNamedColors.h>
 #include <vtkProperty.h>
+#include <vtkCleanPolyData.h>
+
 #endif // GRAPHICAL
 
 using namespace std;
@@ -75,7 +77,8 @@ void printTime(clock_t start, clock_t end);
 * @param surface	vtkFlyingEdges3D object which contains the isosurface
 */
 #ifdef GRAPHICAL
-void renderSurface(vtkFlyingEdges3D* surface);
+// void renderSurface(vtkFlyingEdges3D* surface);
+void renderSurface(vtkCleanPolyData* cleanpoly);
 #endif // GRAPHICAL
 
 

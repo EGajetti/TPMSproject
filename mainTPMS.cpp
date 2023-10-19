@@ -1,6 +1,7 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkMassProperties.h>
+#include <vtkCleanPolyData.h>
 
 #include "Definition.h"
 #include "Utils.h"
@@ -27,7 +28,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		var_value = readConfiguration("configuration.txt");
-		out_file = "myTPMSCpp.stl";
+		out_file = "myTPMSCpp_clean.stl";
 	}
 
 	clock_t t0 = clock();
@@ -74,15 +75,18 @@ int main(int argc, char* argv[])
 	vtkNew<vtkMarchingCubes> surface;
 #endif
 
+	vtkNew<vtkCleanPolyData> cleanpoly;
 
 	// Generation of the final TPMS lattice object
 
 	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rstart);
-	tpms_final.SetVtkObjects(volume, surface, massProperties);
+	tpms_final.SetVtkObjects(volume, surface, massProperties, cleanpoly);
 	tpms_final.TpmsSet();
 
 	double stlVol = tpms_final.TpmsVolume();
 	double stlArea = tpms_final.TpmsArea();
+
+	
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
@@ -92,6 +96,7 @@ int main(int argc, char* argv[])
 	// Saving to .stl file
 
 	if (saveSTL) {
+		tpms_final.TpmsClean();
 		tpms_final.TpmsWriteToSTL(out_file);
 	}
 
@@ -106,19 +111,10 @@ int main(int argc, char* argv[])
 
 #ifdef GRAPHICAL
 	if (graph)
-		renderSurface(surface);
+		renderSurface(cleanpoly);
 #endif // GRAPHICAL
 
 
 	return EXIT_SUCCESS;
 
 }
-
-//For problem closing borders
-//#include <vtkFillHolesFilter.h> //For problem closing borders
-/*
-vtkNew<vtkFillHolesFilter> fillHolesFilter;
-fillHolesFilter->SetInputData(surface->GetOutput());
-fillHolesFilter->SetHoleSize(1.0);
-fillHolesFilter->Update();
-*/

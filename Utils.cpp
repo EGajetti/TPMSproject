@@ -66,7 +66,8 @@ double* convertOrigin(string origin) {
 
 #ifdef GRAPHICAL
 
-void renderSurface(vtkFlyingEdges3D* surface) {
+//void renderSurface(vtkFlyingEdges3D* surface) {
+void renderSurface(vtkCleanPolyData* cleanpoly) {
 
 	vtkNew<vtkNamedColors> colors;
 
@@ -81,7 +82,8 @@ void renderSurface(vtkFlyingEdges3D* surface) {
 	interactor->SetRenderWindow(renderWindow);
 
 	vtkNew<vtkPolyDataMapper> mapper;
-	mapper->SetInputConnection(surface->GetOutputPort());
+	// mapper->SetInputConnection(surface->GetOutputPort());
+	mapper->SetInputConnection(cleanpoly->GetOutputPort());
 	mapper->ScalarVisibilityOff();
 
 	vtkNew<vtkActor> actor;
