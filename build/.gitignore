@@ -8,3 +8,7 @@ x64
 CMakeCache.txt
 .ninja_log
 .ninja_deps
+*.stl
+compile_commands.json
+build.ninja
+DesignTPMS

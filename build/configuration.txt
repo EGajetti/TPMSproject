@@ -1,0 +1,43 @@
+# Configuration file for TPMS generator
+
+# Increment number final mesh (reduce in case of several unit cells)
+Number of final points = 50
+
+# Increment number for volume fraction calibration
+Number of points = 100
+
+# TPMS type: P, G, D, I, S, F, N (for the full names, see the file TPMSGenerator.cpp)
+TPMSType = G
+
+# TPMS type: net, sheet (not implemented)
+Type = net
+
+# Target volume fraction
+Volume fraction = 0.3
+
+# Number of unit cells per coordinate direction in the lattice
+Number of cells = 2
+
+# Target size of the lattice
+Target size = 10
+
+# Center of the lattice
+Center = [0,0,0]
+
+
+########## Normally no input required #######
+
+# Start value of the level set constant r
+R start = -0.07
+
+# Default step size in while loop
+R step = -0.1
+
+# Tolerance value for calibration of the volume fraction
+Volume tolerance = 0.0001
+
+# Save final TPMS to .stl file: yes = 1, no = 0
+Save to STL = 1
+
+# Show image at the end: yes = 1, no = 0
+Graph = 1
