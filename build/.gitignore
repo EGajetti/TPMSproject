@@ -1,6 +1,6 @@
 .vs
 CMakeFiles/
-DesignTPMS.dir
+mainTPMS.dir
 x64
 *.vcxproj*
 *.cmake
@@ -11,4 +11,4 @@ CMakeCache.txt
 *.stl
 compile_commands.json
 build.ninja
-DesignTPMS
+mainTPMS
