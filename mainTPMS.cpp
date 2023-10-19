@@ -42,23 +42,26 @@ int main(int argc, char* argv[])
 	string type = var_value[3];
 	float volFrac = stof(var_value[4]);
 
-	int numCell = stoi(var_value[5]);
-	float tarSize = stof(var_value[6]);
+	int numCellX = stoi(var_value[5]);
+	int numCellY = stoi(var_value[6]);
+	int numCellZ = stoi(var_value[7]);
 
-	double* origin = convertOrigin(var_value[7]);
+	float tarSize = stof(var_value[8]);
+
+	double* origin = convertOrigin(var_value[9]);
 
 
 	// Calibration of volume fraction
 
-	float rstart = stof(var_value[8]);
-	float rStep = stof(var_value[9]);
-	float volTol = stof(var_value[10]);
+	float rstart = stof(var_value[10]);
+	float rStep = stof(var_value[11]);
+	float volTol = stof(var_value[12]);
 
 
 	// Saving TPMS to stl file and display the TPMS
 
-	bool saveSTL = stoi(var_value[11]);
-	bool graph = stoi(var_value[12]);
+	bool saveSTL = stoi(var_value[13]);
+	bool graph = stoi(var_value[14]);
 
 
 	// Vtk objects
@@ -72,66 +75,14 @@ int main(int argc, char* argv[])
 #endif
 
 
-	// TPMS object
+	// Generation of the final TPMS lattice object
 
-	Tpms tpms(n, 1, 1, TPMSname, origin, rstart);
-	tpms.SetVtkObjects(volume, surface, massProperties);
-	tpms.TpmsSet();
-
-	double stlVol = tpms.TpmsVolume();
-	double stlArea = tpms.TpmsArea();
-
-
-	// Rough calibration of the level set constant r
-
-	while (abs(stlVol - volFrac) > volTol) {
-		if (stlVol - volFrac > 0) {
-			tpms.TpmsUpdate(-rStep);
-			stlVol = tpms.TpmsVolume();
-			stlArea = tpms.TpmsArea();
-			rstart = rstart + rStep;
-			if (stlVol - volFrac < 0)
-				break;
-		}
-		else if (stlVol - volFrac < 0) {
-			tpms.TpmsUpdate(rStep);
-			stlVol = tpms.TpmsVolume();
-			stlArea = tpms.TpmsArea();
-			rstart = rstart - rStep;
-			if (stlVol - volFrac > 0)
-				break;
-		}
-	}
-
-
-	// Exact calibration of the level set constant r
-
-	float counter = 1;
-	while (abs(stlVol - volFrac) > volTol) {
-		counter = counter * 2;
-		if (stlVol - volFrac > 0) {
-			tpms.TpmsUpdate(-rStep / counter);
-			stlVol = tpms.TpmsVolume();
-			stlArea = tpms.TpmsArea();
-			rstart = rstart + rStep / counter;
-		}
-		else if (stlVol - volFrac < 0) {
-			tpms.TpmsUpdate(rStep / counter);
-			stlVol = tpms.TpmsVolume();
-			stlArea = tpms.TpmsArea();
-			rstart = rstart - rStep / counter;
-		}
-	}
-
-
-	// Generation of the final TPMS lattice
-
-	Tpms tpms_final(nFinal, tarSize, numCell, TPMSname, origin, rstart);
+	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rstart);
 	tpms_final.SetVtkObjects(volume, surface, massProperties);
 	tpms_final.TpmsSet();
 
-	stlVol = tpms_final.TpmsVolume();
-	stlArea = tpms.TpmsArea();
+	double stlVol = tpms_final.TpmsVolume();
+	double stlArea = tpms_final.TpmsArea();
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 

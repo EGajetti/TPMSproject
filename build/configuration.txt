@@ -15,15 +15,20 @@ Type = net
 # Target volume fraction
 Volume fraction = 0.3
 
-# Number of unit cells per coordinate direction in the lattice
+# Number of unit cells per coordinate direction X in the lattice
+Number of cells = 1
+
+# Number of unit cells per coordinate direction Y in the lattice
 Number of cells = 2
+
+# Number of unit cells per coordinate direction Z in the lattice
+Number of cells = 3
 
 # Target size of the lattice
 Target size = 10
 
 # Center of the lattice
 Center = [0,0,0]
-
 
 ########## Normally no input required #######
 

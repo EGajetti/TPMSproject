@@ -34,12 +34,14 @@ using namespace std;
 * \brief Functions for setting scalar values in a VTKImageDATA given a function:
 *
 * @param npoints	Dimension of the VTKImagedata
-* @param numcell	Number of cells
+* @param numcellx	Number of cells along x
+* @param numcelly	Number of cells along y
+* @param numcellz	Number of cells along z
 * @param type       Char selecting the TPMS type
 * @param rstart     Start parameter
 * @param volume	    VTKImageData
 */
-void TpmsGenerator(const int npoints, const int numcell, char type, const float rstart, vtkImageData* volume);
+void TpmsGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume);
 
 
 /**

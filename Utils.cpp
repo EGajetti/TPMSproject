@@ -13,8 +13,8 @@ string* readConfiguration(const char* filename) {
 	ifstream file(filename);
 
 	string line;
-	string var_name[13];
-	string* var_value = new string[13];
+	string var_name[15];
+	string* var_value = new string[15];
 	string inSection;
 	size_t posequal;
 	int var_pos = 0;

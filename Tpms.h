@@ -32,7 +32,7 @@ public:
 	/// Standard constructor
 	Tpms();
 	/// Constructor with initialized itemList
-	Tpms(int npoints, float scalevtk, int numcell, char typetpms, double origin[3], float rstart);
+	Tpms(int npoints, float scalevtk, int numcellx, int numcelly, int numcellz, char typetpms, double origin[3], float rstart);
 	/// Destructor
 	~Tpms();
 
@@ -80,7 +80,9 @@ protected:
 
 	int nPoints;
 	float scaleVtk;
-	int numCell;
+	int numCellX;
+	int numCellY;
+	int numCellZ;
 	char typeTpms;
 	double isoValue;
 	float rStart;

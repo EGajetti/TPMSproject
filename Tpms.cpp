@@ -16,16 +16,20 @@ using namespace std;
 Tpms::Tpms() {
 	nPoints = 100;
 	scaleVtk = 1;
-	numCell = 1;
+	numCellX = 1;
+	numCellY = 1;
+	numCellZ = 1;
 	typeTpms = 'G';
 	rStart = -0.07;
 	isoValue = 0.;
 }
 
-Tpms::Tpms(int npoints, float scalevtk, int numcell, char typetpms, double origin[3], float rstart) {
+Tpms::Tpms(int npoints, float scalevtk, int numcellx, int numcelly, int numcellz, char typetpms, double origin[3], float rstart) {
 	nPoints = npoints;
 	scaleVtk = scalevtk;
-	numCell = numcell;
+	numCellX = numcellx;
+	numCellY = numcelly;
+	numCellZ = numcellz;
 	typeTpms = typetpms;
 	rStart = rstart;
 	isoValue = 0.;
@@ -61,23 +65,23 @@ void Tpms::TpmsSet() {
 
 	Volume->ReleaseData();
 
-	int extent[6] = { -1, nPoints * numCell + 1, -1, nPoints * numCell + 1, -1, nPoints * numCell + 1 };
+	int extent[6] = { -1, nPoints * numCellX + 1, -1, nPoints * numCellY + 1, -1, nPoints * numCellZ + 1 };
 	Volume->SetExtent(extent);
 	Volume->SetOrigin(Origin);
 
-	double spacing[3] = { 1. / nPoints / numCell * scaleVtk, 1. / nPoints / numCell * scaleVtk, 1. / nPoints / numCell * scaleVtk };
+	double spacing[3] = { 1. / nPoints / numCellX * scaleVtk, 1. / nPoints / numCellY * scaleVtk, 1. / nPoints / numCellZ * scaleVtk };
 	Volume->SetSpacing(spacing);
 
 	Volume->AllocateScalars(VTK_FLOAT, 1);
 
-	TpmsGenerator(nPoints, numCell, typeTpms, rStart, Volume);
+	TpmsGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rStart, Volume);
 }
 
 
 void Tpms::TpmsUpdate(float rstep) {
-	for (int z = 0; z < nPoints * numCell; z++)
-		for (int y = 0; y < nPoints * numCell; y++)
-			for (int x = 0; x < nPoints * numCell; x++) {
+	for (int z = 0; z < nPoints * numCellX; z++)
+		for (int y = 0; y < nPoints * numCellY; y++)
+			for (int x = 0; x < nPoints * numCellZ; x++) {
 				float* a = static_cast<float*> (Volume->GetScalarPointer(x, y, z));
 				*a = *a + rstep;
 			}
