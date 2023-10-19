@@ -69,7 +69,9 @@ void Tpms::TpmsSet() {
 	Volume->SetExtent(extent);
 	Volume->SetOrigin(Origin);
 
-	double spacing[3] = { 1. / nPoints / numCellX * scaleVtk, 1. / nPoints / numCellY * scaleVtk, 1. / nPoints / numCellZ * scaleVtk };
+	//double spacing[3] = { 1. / nPoints / numCellX * scaleVtk, 1. / nPoints / numCellY * scaleVtk, 1. / nPoints / numCellZ * scaleVtk };
+	double spacing[3] = { 1. / nPoints * scaleVtk, 1. / nPoints * scaleVtk, 1. / nPoints * scaleVtk };
+
 	Volume->SetSpacing(spacing);
 
 	Volume->AllocateScalars(VTK_FLOAT, 1);
