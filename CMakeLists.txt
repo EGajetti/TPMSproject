@@ -38,17 +38,17 @@ endif()
 
 
 if (NOT VTK_FOUND)
-  message(FATAL_ERROR "DesignTPMS: Unable to find the VTK build folder.")
+  message(FATAL_ERROR "mainTPMS: Unable to find the VTK build folder.")
 endif()
 
 # Prevent a "command line is too long" failure in Windows.
 set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
-add_executable(DesignTPMS DesignTPMS.cpp Utils.cpp TPMSGenerator.cpp Tpms.cpp)
-target_link_libraries(DesignTPMS PRIVATE ${VTK_LIBRARIES}
+add_executable(mainTPMS mainTPMS.cpp Utils.cpp TPMSGenerator.cpp Tpms.cpp)
+target_link_libraries(mainTPMS PRIVATE ${VTK_LIBRARIES}
 )
 #target_compile_definitions(Isosurface PRIVATE ${VTK_DEFINITIONS}) #was in branch vtk_v8
 # vtk_module_autoinit is needed
 vtk_module_autoinit(
-  TARGETS DesignTPMS
+  TARGETS mainTPMS
   MODULES ${VTK_LIBRARIES}
 )
