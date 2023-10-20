@@ -1,7 +1,6 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkMassProperties.h>
-#include <vtkCleanPolyData.h>
 #include <vtkQuadricDecimation.h>
 
 #include "Definition.h"
@@ -38,32 +37,28 @@ int main(int argc, char* argv[])
 	// Input
 
 	int nFinal = stoi(var_value[0]);
-	int n = stoi(var_value[1]);
 
-	char TPMSname = var_value[2][0];
-	string type = var_value[3];
-	float volFrac = stof(var_value[4]);
+	char TPMSname = var_value[1][0];
+	string type = var_value[2];
 
-	int numCellX = stoi(var_value[5]);
-	int numCellY = stoi(var_value[6]);
-	int numCellZ = stoi(var_value[7]);
+	int numCellX = stoi(var_value[3]);
+	int numCellY = stoi(var_value[4]);
+	int numCellZ = stoi(var_value[5]);
 
-	float tarSize = stof(var_value[8]);
+	float tarSize = stof(var_value[6]);
 
-	double* origin = convertOrigin(var_value[9]);
+	double* origin = convertOrigin(var_value[7]);
 
 
 	// Calibration of volume fraction
 
-	float rstart = stof(var_value[10]);
-	float rStep = stof(var_value[11]);
-	float volTol = stof(var_value[12]);
+	float rstart = stof(var_value[8]);
 
 
 	// Saving TPMS to stl file and display the TPMS
 
-	bool saveSTL = stoi(var_value[13]);
-	bool graph = stoi(var_value[14]);
+	bool saveSTL = stoi(var_value[9]);
+	bool graph = stoi(var_value[10]);
 
 
 	// Vtk objects
@@ -76,12 +71,10 @@ int main(int argc, char* argv[])
 	vtkNew<vtkMarchingCubes> surface;
 #endif
 
-	vtkNew<vtkCleanPolyData> cleanpoly;
-
 	// Generation of the final TPMS lattice object
 
 	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rstart);
-	tpms_final.SetVtkObjects(volume, surface, massProperties, cleanpoly);
+	tpms_final.SetVtkObjects(volume, surface, massProperties);
 	tpms_final.TpmsSet();
 
 	double stlVol = tpms_final.TpmsVolume();
@@ -92,13 +85,12 @@ int main(int argc, char* argv[])
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
-	cout << "Final volume fraction TPMS: " << volFracFinal << endl;
+	cout << "Volume TPMS: " << volFracFinal << endl;
 
 
 	// Saving to .stl file
 
 	if (saveSTL) {
-		tpms_final.TpmsClean();
 		tpms_final.TpmsWriteToSTL(out_file,decimate);
 	}
 
@@ -113,7 +105,7 @@ int main(int argc, char* argv[])
 
 #ifdef GRAPHICAL
 	if (graph)
-		renderSurface(cleanpoly);
+		renderSurface(surface, decimate);
 #endif // GRAPHICAL
 
 

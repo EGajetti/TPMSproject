@@ -5,7 +5,6 @@
 #include <vtkNew.h>
 #include <vtkMassProperties.h>
 #include <vtkSTLWriter.h>
-#include <vtkCleanPolyData.h>
 #include <vtkQuadricDecimation.h>
 
 #include "Definition.h"
@@ -49,10 +48,6 @@ public:
 	*/
 	void TpmsUpdate(float rstep);
 
-	/**
-	 *  \brief Clean the output mesh
-	*/
-	void TpmsClean();
 
 	/**
 	*  \brief Get the TPMS volume
@@ -84,9 +79,9 @@ public:
 	*  @param massproperties vtkMassProperties object used to calculate area and volume of the TPMS
 	*/
 #ifdef USE_FLYING_EDGES
-	void SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties, vtkCleanPolyData* cleanpoly);
+	void SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties);
 #else
-	void SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties, vtkCleanPolyData* cleanpoly);
+	void SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties);
 #endif
 
 
@@ -103,7 +98,6 @@ protected:
 	double Origin[3] = { 0,0,0 };
 	vtkImageData* Volume;
 	vtkMassProperties* massProperties;
-	vtkCleanPolyData* cleanPoly;
 #ifdef USE_FLYING_EDGES
 	vtkFlyingEdges3D* Surface;
 #else

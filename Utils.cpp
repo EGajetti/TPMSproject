@@ -66,8 +66,7 @@ double* convertOrigin(string origin) {
 
 #ifdef GRAPHICAL
 
-//void renderSurface(vtkFlyingEdges3D* surface) {
-void renderSurface(vtkCleanPolyData* cleanpoly) {
+void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate) {
 
 	vtkNew<vtkNamedColors> colors;
 
@@ -83,7 +82,8 @@ void renderSurface(vtkCleanPolyData* cleanpoly) {
 
 	vtkNew<vtkPolyDataMapper> mapper;
 	// mapper->SetInputConnection(surface->GetOutputPort());
-	mapper->SetInputConnection(cleanpoly->GetOutputPort());
+	mapper->SetInputConnection(decimate->GetOutputPort());
+
 	mapper->ScalarVisibilityOff();
 
 	vtkNew<vtkActor> actor;
@@ -97,54 +97,3 @@ void renderSurface(vtkCleanPolyData* cleanpoly) {
 }
 #endif // GRAPHICAL
 
-
-//-------------- Old functions no more used --------------//
-
-/*
-void readVolumeFromFile(const char* filename,
-	int extent[6], const double origin[3], const double spacing[3],
-	vtkImageData* volume) {
-
-	ifstream myfile;
-	myfile.open(filename);
-	if(myfile.fail()){
-		cout << "File \'" << filename << "\' doesn't exist in this folder." << endl;
-		exit(EXIT_FAILURE);
-	}
-	int i, j, k;
-	float isoval;
-	volume->SetExtent(extent);
-	volume->SetOrigin(origin);
-	volume->SetSpacing(spacing);
-	volume->AllocateScalars(VTK_FLOAT, 1);
-
-	while (myfile >> i >> j >> k >> isoval)
-	{
-		volume->SetScalarComponentFromFloat(i, j, k, 0, isoval);
-		//float* zPtr = (float*)volume1->GetScalarPointer(i, j, k);
-		//*zPtr = isoval;
-	}
-}
-
-
-void writeVolumeToFile(const char* filename, vtkImageData* volume) {
-
-	ofstream myfile;
-	myfile.open(filename);
-	int extent[6];
-	volume->GetExtent(extent);
-	for (int k = extent[4]; k < extent[5]; k++)
-	{
-		for (int j = extent[2]; j < extent[3]; j++)
-		{
-			for (int i = extent[0]; i < extent[1]; i++)
-			{
-				myfile << i << " " << j << " " << k << " ";
-				myfile << *static_cast<float*>(volume->GetScalarPointer(i, j, k)) << endl;
-			}
-		}
-	}
-
-	myfile.close();
-}
- */

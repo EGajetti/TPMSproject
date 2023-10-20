@@ -44,20 +44,18 @@ Tpms::~Tpms() {}
 //--------- Class methods --------------//
 
 #ifdef USE_FLYING_EDGES
-void Tpms::SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties, vtkCleanPolyData* cleanpoly) {
+void Tpms::SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties) {
 	Volume = volume;
 	Surface = surface;
 	massProperties = massproperties;
-	cleanPoly = cleanpoly;
 }
 #else
 
 
-void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties, vtkCleanPolyData* cleanpoly) {
+void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties) {
 	Volume = volume;
 	Surface = surface;
 	massProperties = massproperties;
-	cleanPoly = cleanpoly;
 }
 #endif
 
@@ -92,19 +90,6 @@ void Tpms::TpmsUpdate(float rstep) {
 			}
 }
 
-void Tpms::TpmsClean() {
-	Surface->RemoveAllInputs();
-	Surface->SetInputData(Volume);
-	Surface->ComputeNormalsOn();
-	Surface->SetValue(0, isoValue);
-	Surface->Update();
-	cleanPoly->SetInputConnection(Surface->GetOutputPort());
-	cleanPoly->ConvertLinesToPointsOn();
-	cleanPoly->ConvertLinesToPointsOn();
-	cleanPoly->ConvertPolysToLinesOn();
-	cleanPoly->ConvertStripsToPolysOn();
-	cleanPoly->Update();
-}
 
 
 double Tpms::TpmsVolume() {
@@ -146,8 +131,6 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation() {
 
 void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
 	vtkNew<vtkSTLWriter> writer;
-	// writer->SetInputData(Surface->GetOutput());
-	//writer->SetInputData(cleanPoly->GetOutput());
 	writer->SetInputData(decimate->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
