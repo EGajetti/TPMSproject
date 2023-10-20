@@ -6,6 +6,7 @@
 #include <vtkMassProperties.h>
 #include <vtkSTLWriter.h>
 #include <vtkCleanPolyData.h>
+#include <vtkQuadricDecimation.h>
 
 #include "Definition.h"
 #include "Utils.h"
@@ -63,11 +64,18 @@ public:
 	*/
 	double TpmsArea();
 
+
+	/**
+	 * \brief Reduce the mesh
+	*/
+	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation();
+
 	/**
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	void TpmsWriteToSTL(const char* filename);
+	void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
+
 
 	/**
 	*  \brief Set the pointers to the vtk object of the class

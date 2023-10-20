@@ -2,6 +2,7 @@
 #include <vtkNew.h>
 #include <vtkMassProperties.h>
 #include <vtkCleanPolyData.h>
+#include <vtkQuadricDecimation.h>
 
 #include "Definition.h"
 #include "Utils.h"
@@ -28,7 +29,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		var_value = readConfiguration("configuration.txt");
-		out_file = "myTPMSCpp_clean.stl";
+		out_file = "myTPMSCpp_reduced.stl";
 	}
 
 	clock_t t0 = clock();
@@ -86,7 +87,8 @@ int main(int argc, char* argv[])
 	double stlVol = tpms_final.TpmsVolume();
 	double stlArea = tpms_final.TpmsArea();
 
-	
+	// Reducing mesh size
+	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
@@ -97,7 +99,7 @@ int main(int argc, char* argv[])
 
 	if (saveSTL) {
 		tpms_final.TpmsClean();
-		tpms_final.TpmsWriteToSTL(out_file);
+		tpms_final.TpmsWriteToSTL(out_file,decimate);
 	}
 
 

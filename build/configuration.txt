@@ -1,7 +1,7 @@
 # Configuration file for TPMS generator
 
 # Increment number final mesh (reduce in case of several unit cells)
-Number of final points = 100
+Number of final points = 50
 
 # Increment number for volume fraction calibration
 Number of points = 100
@@ -16,10 +16,10 @@ Type = net
 Volume fraction = 0.3
 
 # Number of unit cells per coordinate direction X in the lattice
-Number of cells = 1
+Number of cells = 10
 
 # Number of unit cells per coordinate direction Y in the lattice
-Number of cells = 1
+Number of cells = 10
 
 # Number of unit cells per coordinate direction Z in the lattice
 Number of cells = 1
@@ -45,4 +45,4 @@ Volume tolerance = 0.0001
 Save to STL = 1
 
 # Show image at the end: yes = 1, no = 0
-Graph = 1
+Graph = 0

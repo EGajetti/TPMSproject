@@ -2,7 +2,7 @@
  * This file is part of {{ tpmsGenerator }}.
  *
  * .Package for creating a Tpms object
- *  Autors: E. Gajetti, U. Follo
+ *  Authors: E. Gajetti, U. Follo
  */
 
  // cpp file of Tpms class
@@ -41,8 +41,7 @@ Tpms::~Tpms() {}
 
 
 
-
-//--------- Metodi della classe --------------//
+//--------- Class methods --------------//
 
 #ifdef USE_FLYING_EDGES
 void Tpms::SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties, vtkCleanPolyData* cleanpoly) {
@@ -135,11 +134,21 @@ double Tpms::TpmsArea() {
 	return stlArea;
 }
 
+vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation() {
+	vtkNew<vtkQuadricDecimation> decimate;
+	float reduction = 0.9;
+  	decimate->SetInputData(Surface->GetOutput());
+  	decimate->SetTargetReduction(reduction);
+  	decimate->VolumePreservationOn();
+  	decimate->Update();
+	return decimate;
+}
 
-void Tpms::TpmsWriteToSTL(const char* filename) {
+void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
 	vtkNew<vtkSTLWriter> writer;
 	// writer->SetInputData(Surface->GetOutput());
-	writer->SetInputData(cleanPoly->GetOutput());
+	//writer->SetInputData(cleanPoly->GetOutput());
+	writer->SetInputData(decimate->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();

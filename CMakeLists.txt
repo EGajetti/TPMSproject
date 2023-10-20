@@ -12,6 +12,7 @@ if(GRAPHICAL)
     CommonCore			#vtkNew.h, vtkVersion.h
     CommonDataModel		#vtkImageData.h
     FiltersCore			#vtkFlyingEdges3D.h, vtkMarchingCubes.h
+    FiltersSources  #vtkDecimate
     IOGeometry			#vtkSTLWriter.h
     #FiltersModeling	#vtkFillHolesFilter.h
     
