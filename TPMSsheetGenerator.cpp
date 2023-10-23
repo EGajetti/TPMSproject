@@ -6,7 +6,7 @@ using namespace std;
 
 // Implementation of the function defined in Utils.h
 
-void TpmsGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume)
+void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume)
 {
 	int dimx = npoints * numcellx;
 	int dimy = npoints * numcelly;
@@ -39,9 +39,9 @@ void TpmsGenerator(const int npoints, const int numcellx, const int numcelly, co
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = -(cosv[x] + cosv[y] + cosv[z]) - rstart;
+					scal = -(cosv[x] + cosv[y] + cosv[z]);
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
-					*a = scal;
+					*a = (scal + rstart)*(scal - rstart);
 					temp++;
 				}
 	} break;
@@ -52,9 +52,9 @@ void TpmsGenerator(const int npoints, const int numcellx, const int numcelly, co
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = cosv[x] * senv[y] + cosv[y] * senv[z] + cosv[z] * senv[x] - rstart;
+					scal = cosv[x] * senv[y] + cosv[y] * senv[z] + cosv[z] * senv[x];
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
-					*a = scal;
+					*a = (scal + rstart)*(scal - rstart);
 					temp++;
 				}
 	} break;

@@ -3,6 +3,7 @@
 #include <vtkMassProperties.h>
 #include <vtkQuadricDecimation.h>
 
+
 #include "Definition.h"
 #include "Utils.h"
 #include "Tpms.h"
@@ -75,18 +76,18 @@ int main(int argc, char* argv[])
 
 	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rstart);
 	tpms_final.SetVtkObjects(volume, surface, massProperties);
-	tpms_final.TpmsSet();
+	tpms_final.TpmsSet(type);
 
 	double stlVol = tpms_final.TpmsVolume();
 	double stlArea = tpms_final.TpmsArea();
 
 	// Reducing mesh size
-	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
+	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation(surface);
+
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
 	cout << "Volume TPMS: " << volFracFinal << endl;
-
 
 	// Saving to .stl file
 

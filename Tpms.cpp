@@ -60,7 +60,7 @@ void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMas
 #endif
 
 
-void Tpms::TpmsSet() {
+void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
 
@@ -77,19 +77,18 @@ void Tpms::TpmsSet() {
 
 	Volume->AllocateScalars(VTK_FLOAT, 1);
 
-	TpmsGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rStart, Volume);
+	if (type == "solid"){
+		TpmsSolidGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rStart, Volume);
+
+	}
+	else if (type == "sheet"){
+		TpmsSheetGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rStart, Volume);
+	}
+	else{
+		cout << "Invalid TPMS type" << endl;
+	}
+	
 }
-
-
-void Tpms::TpmsUpdate(float rstep) {
-	for (int z = 0; z < nPoints * numCellX; z++)
-		for (int y = 0; y < nPoints * numCellY; y++)
-			for (int x = 0; x < nPoints * numCellZ; x++) {
-				float* a = static_cast<float*> (Volume->GetScalarPointer(x, y, z));
-				*a = *a + rstep;
-			}
-}
-
 
 
 double Tpms::TpmsVolume() {
@@ -119,10 +118,11 @@ double Tpms::TpmsArea() {
 	return stlArea;
 }
 
-vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation() {
+vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS) {
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.9;
+	float reduction = 0.7;
   	decimate->SetInputData(Surface->GetOutput());
+	// decimate->SetInputData(intersectTPMS->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
   	decimate->Update();

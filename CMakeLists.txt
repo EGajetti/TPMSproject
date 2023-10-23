@@ -44,7 +44,7 @@ endif()
 
 # Prevent a "command line is too long" failure in Windows.
 set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response files.")
-add_executable(mainTPMS mainTPMS.cpp Utils.cpp TPMSGenerator.cpp Tpms.cpp)
+add_executable(mainTPMS mainTPMS.cpp Utils.cpp TPMSsolidGenerator.cpp TPMSsheetGenerator.cpp Tpms.cpp)
 target_link_libraries(mainTPMS PRIVATE ${VTK_LIBRARIES}
 )
 #target_compile_definitions(Isosurface PRIVATE ${VTK_DEFINITIONS}) #was in branch vtk_v8

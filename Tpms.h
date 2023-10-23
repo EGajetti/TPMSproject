@@ -7,6 +7,7 @@
 #include <vtkSTLWriter.h>
 #include <vtkQuadricDecimation.h>
 
+
 #include "Definition.h"
 #include "Utils.h"
 
@@ -40,13 +41,7 @@ public:
 	/**
 	 *  \brief Set the properties of the vtk obbjects
 	*/
-	void TpmsSet();
-
-	/**
-	 *  \brief Update the TPMS adding the rstep to the scalar matrix
-	 *  @param rstep Float to add to the scalar of the matrix
-	*/
-	void TpmsUpdate(float rstep);
+	void TpmsSet(string type);
 
 
 	/**
@@ -63,7 +58,7 @@ public:
 	/**
 	 * \brief Reduce the mesh
 	*/
-	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation();
+	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS);
 
 	/**
 	*  \brief Write the Tpms to the stl file

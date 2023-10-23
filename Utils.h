@@ -43,7 +43,21 @@ using namespace std;
 * @param rstart     Start parameter
 * @param volume	    VTKImageData
 */
-void TpmsGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume);
+void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume);
+
+/**
+* \brief Functions for setting scalar values in a VTKImageDATA given a function:
+*
+* @param npoints	Dimension of the VTKImagedata
+* @param numcellx	Number of cells along x
+* @param numcelly	Number of cells along y
+* @param numcellz	Number of cells along z
+* @param type       Char selecting the TPMS type
+* @param rstart     Start parameter
+* @param volume	    VTKImageData
+*/
+void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume);
+
 
 
 /**
