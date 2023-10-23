@@ -8,9 +8,9 @@ using namespace std;
 
 void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume)
 {
-	int dimx = npoints * numcellx;
-	int dimy = npoints * numcelly;
-	int dimz = npoints * numcellz;
+	int dimx = npoints * numcellx + 1;
+	int dimy = npoints * numcelly + 1;
+	int dimz = npoints * numcellz + 1;
 	int dimension = max({dimx, dimy, dimz});
 
 	const float pi = 2 * 3.14159265358979323846 / npoints;
