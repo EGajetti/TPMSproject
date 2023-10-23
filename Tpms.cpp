@@ -64,8 +64,8 @@ void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
 
-	// int extent[6] = { -2, nPoints * numCellX + 2, -2, nPoints * numCellY + 2, -2, nPoints * numCellZ + 2 };
-	int extent[6] = { -1, nPoints * numCellX , -1, nPoints * numCellY , -1, nPoints * numCellZ };
+	int extent[6] = { -2, nPoints * numCellX + 2, -2, nPoints * numCellY + 2, -2, nPoints * numCellZ + 2 };
+	// int extent[6] = { -1, nPoints * numCellX , -1, nPoints * numCellY , -1, nPoints * numCellZ };
 
 	Volume->SetExtent(extent);
 	Volume->SetOrigin(Origin);
@@ -120,7 +120,7 @@ double Tpms::TpmsArea() {
 
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS) {
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.7;
+	float reduction = 0.8;
   	decimate->SetInputData(Surface->GetOutput());
 	// decimate->SetInputData(intersectTPMS->GetOutput());
   	decimate->SetTargetReduction(reduction);
@@ -129,9 +129,37 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* inter
 	return decimate;
 }
 
+vtkSmartPointer<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimation* decimate){
+	// Creation of the box to intersect
+	vtkNew<vtkCubeSource> cubo;
+	// double centro[3] = {10.0, 10.0, 10.0};
+	// cubo->SetCenter(centro);
+	cubo->SetCenter(numCellX*scaleVtk/2, numCellY*scaleVtk/2, numCellZ*scaleVtk/2);
+	cubo->SetXLength(numCellX*scaleVtk);
+	cubo->SetYLength(numCellY*scaleVtk);
+	cubo->SetZLength(numCellZ*scaleVtk);
+	// cubo->SetXLength(10);
+    // cubo->SetYLength(10);
+    // cubo->SetZLength(10);
+	cubo->Update();
+
+	auto intersezione = vtkSmartPointer<vtkPolyDataBooleanFilter>::New();
+
+	// vtkNew<vtkPolyDataBooleanFilter> intersezione;
+	intersezione->SetInputConnection(0, cubo->GetOutputPort());
+	intersezione->SetInputData(1, decimate->GetOutput());
+	intersezione->SetOperModeToDifference();
+	intersezione->Update();
+	return intersezione;
+}
+
+
+
 void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
+	// void Tpms::TpmsWriteToSTL(const char* filename, vtkSmartPointer<vtkPolyDataBooleanFilter>* intersezione) {
 	vtkNew<vtkSTLWriter> writer;
 	writer->SetInputData(decimate->GetOutput());
+	// writer->SetInputConnection(intersezione->GetOutputPort());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();
