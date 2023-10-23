@@ -63,13 +63,14 @@ void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMas
 void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
-
+	// Better to have a sligthly larger extent, so to cut coarse edges a posteriori
 	int extent[6] = { -2, nPoints * numCellX + 2, -2, nPoints * numCellY + 2, -2, nPoints * numCellZ + 2 };
 	// int extent[6] = { -1, nPoints * numCellX , -1, nPoints * numCellY , -1, nPoints * numCellZ };
 
 	Volume->SetExtent(extent);
 	Volume->SetOrigin(Origin);
 
+	// Using the first one will result in deformed cells
 	//double spacing[3] = { 1. / nPoints / numCellX * scaleVtk, 1. / nPoints / numCellY * scaleVtk, 1. / nPoints / numCellZ * scaleVtk };
 	double spacing[3] = { 1. / nPoints * scaleVtk, 1. / nPoints * scaleVtk, 1. / nPoints * scaleVtk };
 
@@ -129,25 +130,22 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* inter
 	return decimate;
 }
 
-vtkSmartPointer<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimation* decimate){
+vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimation* decimate){
+
 	// Creation of the box to intersect
 	vtkNew<vtkCubeSource> cubo;
-	// double centro[3] = {10.0, 10.0, 10.0};
-	// cubo->SetCenter(centro);
+	// Placing the center at the center or the TPMS (which goes from 0 to numCell*scaleVtk)
 	cubo->SetCenter(numCellX*scaleVtk/2, numCellY*scaleVtk/2, numCellZ*scaleVtk/2);
 	cubo->SetXLength(numCellX*scaleVtk);
 	cubo->SetYLength(numCellY*scaleVtk);
 	cubo->SetZLength(numCellZ*scaleVtk);
-	// cubo->SetXLength(10);
-    // cubo->SetYLength(10);
-    // cubo->SetZLength(10);
 	cubo->Update();
 
-	auto intersezione = vtkSmartPointer<vtkPolyDataBooleanFilter>::New();
-
-	// vtkNew<vtkPolyDataBooleanFilter> intersezione;
+	// Creating the boolean filter
+	vtkNew<vtkPolyDataBooleanFilter> intersezione;
 	intersezione->SetInputConnection(0, cubo->GetOutputPort());
 	intersezione->SetInputData(1, decimate->GetOutput());
+	// For some reason, difference works as intersection and viceversa
 	intersezione->SetOperModeToDifference();
 	intersezione->Update();
 	return intersezione;
@@ -155,11 +153,11 @@ vtkSmartPointer<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimati
 
 
 
-void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
-	// void Tpms::TpmsWriteToSTL(const char* filename, vtkSmartPointer<vtkPolyDataBooleanFilter>* intersezione) {
+// void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
+	void Tpms::TpmsWriteToSTL(const char* filename, vtkPolyDataBooleanFilter* intersezione) {
 	vtkNew<vtkSTLWriter> writer;
-	writer->SetInputData(decimate->GetOutput());
-	// writer->SetInputConnection(intersezione->GetOutputPort());
+	// writer->SetInputData(decimate->GetOutput());
+	writer->SetInputData(intersezione->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();

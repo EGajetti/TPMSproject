@@ -68,14 +68,14 @@ public:
 	/**
 	 * \brief Intersect with a cube to clean the boundaries
 	*/
-	vtkSmartPointer<vtkPolyDataBooleanFilter> TpmsIntersect(vtkQuadricDecimation* decimate);
+	vtkNew<vtkPolyDataBooleanFilter> TpmsIntersect(vtkQuadricDecimation* decimate);
 
 	/**
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
-	// void TpmsWriteToSTL(const char* filename, vtkSmartPointer<vtkPolyDataBooleanFilter>* intersezione);
+	// void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
+	void TpmsWriteToSTL(const char* filename, vtkPolyDataBooleanFilter* intersezione);
 
 
 

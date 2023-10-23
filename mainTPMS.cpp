@@ -84,23 +84,19 @@ int main(int argc, char* argv[])
 	// Reducing mesh size
 	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation(surface);
 
-	auto intersezione = vtkSmartPointer<vtkPolyDataBooleanFilter>::New();
-	intersezione = tpms_final.TpmsIntersect(decimate);
+	// Intersecting to cut the coarse edges
+	vtkNew<vtkPolyDataBooleanFilter> intersezione = tpms_final.TpmsIntersect(decimate);
 
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
 	cout << "Volume TPMS: " << volFracFinal << endl;
 
-	auto writer = vtkSmartPointer<vtkSTLWriter>::New();
-    writer->SetInputConnection(intersezione->GetOutputPort());
-    writer->SetFileName("result.stl");
-    writer->Update();
 
 	// Saving to .stl file
 
 	if (saveSTL) {
-		tpms_final.TpmsWriteToSTL(out_file,decimate);
+		tpms_final.TpmsWriteToSTL(out_file,intersezione);
 	}
 
 
