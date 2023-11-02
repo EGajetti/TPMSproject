@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		var_value = readConfiguration("configuration.txt");
-		out_file = "myTPMSCpp_reduced.stl";
+		out_file = "myTPMSFinal.stl";
 	}
 
 	clock_t t0 = clock();
@@ -91,6 +91,15 @@ int main(int argc, char* argv[])
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
 	cout << "Volume TPMS: " << volFracFinal << endl;
+
+
+
+	vtkNew<vtkSTLWriter> writer;
+	writer->SetInputData(decimate->GetOutput());
+	// writer->SetInputData(intersezione->GetOutput());
+	writer->SetFileName("Gyroid.stl");
+	writer->SetFileTypeToBinary();
+	writer->Update();
 
 
 	// Saving to .stl file

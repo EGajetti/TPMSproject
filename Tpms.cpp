@@ -64,7 +64,7 @@ void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
 	// Better to have a sligthly larger extent, so to cut coarse edges a posteriori
-	int extent[6] = { -2, nPoints * numCellX + 2, -2, nPoints * numCellY + 2, -2, nPoints * numCellZ + 2 };
+	int extent[6] = { -10, nPoints * numCellX + 10, -10, nPoints * numCellY + 10, -10, nPoints * numCellZ + 10 };
 	// int extent[6] = { -1, nPoints * numCellX , -1, nPoints * numCellY , -1, nPoints * numCellZ };
 
 	Volume->SetExtent(extent);
@@ -121,7 +121,7 @@ double Tpms::TpmsArea() {
 
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS) {
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.8;
+	float reduction = 0.9;
   	decimate->SetInputData(Surface->GetOutput());
 	// decimate->SetInputData(intersectTPMS->GetOutput());
   	decimate->SetTargetReduction(reduction);
@@ -135,10 +135,12 @@ vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimation* decim
 	// Creation of the box to intersect
 	vtkNew<vtkCubeSource> cubo;
 	// Placing the center at the center or the TPMS (which goes from 0 to numCell*scaleVtk)
-	cubo->SetCenter(numCellX*scaleVtk/2, numCellY*scaleVtk/2, numCellZ*scaleVtk/2);
-	cubo->SetXLength(numCellX*scaleVtk);
-	cubo->SetYLength(numCellY*scaleVtk);
-	cubo->SetZLength(numCellZ*scaleVtk);
+	cubo->SetCenter(numCellX*scaleVtk/2.0, numCellY*scaleVtk/2.0, numCellZ*scaleVtk/2.0);
+	cout << numCellX*scaleVtk/2.0 << endl;
+	cout << numCellX*scaleVtk << endl;
+	cubo->SetXLength(static_cast<float> (numCellX*scaleVtk));
+	cubo->SetYLength(static_cast<float>  (numCellY*scaleVtk));
+	cubo->SetZLength(static_cast<float>  (numCellZ*scaleVtk));
 	cubo->Update();
 
 	// Creating the boolean filter
