@@ -6,12 +6,6 @@
 #include <vtkMassProperties.h>
 #include <vtkSTLWriter.h>
 #include <vtkQuadricDecimation.h>
-#include <vtkCubeSource.h>
-#include <vtkPolyDataBooleanFilter.h>
-#include <vtkSmartPointer.h>
-// #include <vtkPolyDataWriter.h>
-
-
 
 #include "Definition.h"
 #include "Utils.h"
@@ -66,17 +60,10 @@ public:
 	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS);
 
 	/**
-	 * \brief Intersect with a cube to clean the boundaries
-	*/
-	vtkNew<vtkPolyDataBooleanFilter> TpmsIntersect(vtkQuadricDecimation* decimate);
-
-	/**
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	// void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
-	void TpmsWriteToSTL(const char* filename, vtkPolyDataBooleanFilter* intersezione);
-
+	void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
 
 
 	/**

@@ -101,7 +101,7 @@ double Tpms::TpmsVolume() {
 	massProperties->SetInputConnection(Surface->GetOutputPort());
 	massProperties->Update();
 	double stlVol = massProperties->GetVolume();
-	cout << "Volume fraction evaluated: " << stlVol << endl;
+	cout << "Evaluated volume: " << stlVol << endl;
 	return stlVol;
 }
 
@@ -123,41 +123,16 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* inter
 	vtkNew<vtkQuadricDecimation> decimate;
 	float reduction = 0.8;
   	decimate->SetInputData(Surface->GetOutput());
-	// decimate->SetInputData(intersectTPMS->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
   	decimate->Update();
 	return decimate;
 }
 
-vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimation* decimate){
 
-	// Creation of the box to intersect
-	vtkNew<vtkCubeSource> cubo;
-	// Placing the center at the center or the TPMS (which goes from 0 to numCell*scaleVtk)
-	cubo->SetCenter(numCellX*scaleVtk/2, numCellY*scaleVtk/2, numCellZ*scaleVtk/2);
-	cubo->SetXLength(numCellX*scaleVtk);
-	cubo->SetYLength(numCellY*scaleVtk);
-	cubo->SetZLength(numCellZ*scaleVtk);
-	cubo->Update();
-
-	// Creating the boolean filter
-	vtkNew<vtkPolyDataBooleanFilter> intersezione;
-	intersezione->SetInputConnection(0, cubo->GetOutputPort());
-	intersezione->SetInputData(1, decimate->GetOutput());
-	// For some reason, difference works as intersection and viceversa
-	intersezione->SetOperModeToDifference();
-	intersezione->Update();
-	return intersezione;
-}
-
-
-
-// void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
-	void Tpms::TpmsWriteToSTL(const char* filename, vtkPolyDataBooleanFilter* intersezione) {
+void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
 	vtkNew<vtkSTLWriter> writer;
-	// writer->SetInputData(decimate->GetOutput());
-	writer->SetInputData(intersezione->GetOutput());
+	writer->SetInputData(decimate->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();

@@ -81,7 +81,6 @@ void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate) {
 	interactor->SetRenderWindow(renderWindow);
 
 	vtkNew<vtkPolyDataMapper> mapper;
-	// mapper->SetInputConnection(surface->GetOutputPort());
 	mapper->SetInputConnection(decimate->GetOutputPort());
 
 	mapper->ScalarVisibilityOff();

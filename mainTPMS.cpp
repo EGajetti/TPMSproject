@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		var_value = readConfiguration("configuration.txt");
-		out_file = "myTPMSCpp_reduced.stl";
+		out_file = "myTPMS.stl";
 	}
 
 	clock_t t0 = clock();
@@ -84,9 +84,6 @@ int main(int argc, char* argv[])
 	// Reducing mesh size
 	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation(surface);
 
-	// Intersecting to cut the coarse edges
-	vtkNew<vtkPolyDataBooleanFilter> intersezione = tpms_final.TpmsIntersect(decimate);
-
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
@@ -96,7 +93,7 @@ int main(int argc, char* argv[])
 	// Saving to .stl file
 
 	if (saveSTL) {
-		tpms_final.TpmsWriteToSTL(out_file,intersezione);
+		tpms_final.TpmsWriteToSTL(out_file,decimate);
 	}
 
 
