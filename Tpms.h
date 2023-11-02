@@ -6,6 +6,8 @@
 #include <vtkMassProperties.h>
 #include <vtkSTLWriter.h>
 #include <vtkQuadricDecimation.h>
+#include <vtkStaticCleanPolyData.h>
+#include <vtkPolyDataNormals.h>
 
 #include "Definition.h"
 #include "Utils.h"
@@ -53,17 +55,42 @@ public:
 	*/
 	double TpmsArea();
 
+	/**
+	 * \brief cleaning the mesh after surface
+	*/
+	vtkNew <vtkStaticCleanPolyData> TpmsClean();
 
 	/**
-	 * \brief Reduce the mesh
+	 * \brief reeducing the mesh
 	*/
-	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS);
+	vtkNew <vtkQuadricDecimation> TpmsQuadricDecimation();
+
+	/**
+	 * \brief Flip normals orientiation
+	*/
+	vtkNew<vtkPolyDataNormals> TpmsNormals();
+
+	// /**
+	//  * \brief Reduce the mesh
+	// */
+	// vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation();
+
+	// /**
+	//  * \brief Flip normals orientiation
+	// */
+	// vtkNew<vtkPolyDataNormals> TpmsNormals();
+
+	// /**
+	//  * \brief Clean the otuput mesh
+	// */
+	// vtkNew<vtkStaticCleanPolyData> TpmsClean();
 
 	/**
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
 	void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
+	// void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* cleaned);
 
 
 	/**
