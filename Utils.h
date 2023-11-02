@@ -25,6 +25,7 @@
 #include <vtkNamedColors.h>
 #include <vtkProperty.h>
 #include <vtkQuadricDecimation.h>
+#include <vtkStaticCleanPolyData.h>
 
 #endif // GRAPHICAL
 

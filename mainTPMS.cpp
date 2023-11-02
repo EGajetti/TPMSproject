@@ -81,8 +81,7 @@ int main(int argc, char* argv[])
 	double stlVol = tpms_final.TpmsVolume();
 	double stlArea = tpms_final.TpmsArea();
 
-	// Reducing mesh size
-	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation(surface);
+	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
 
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);

@@ -119,10 +119,28 @@ double Tpms::TpmsArea() {
 	return stlArea;
 }
 
-vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS) {
+vtkNew <vtkPolyDataNormals> Tpms::TpmsNormals() {
+	vtkNew<vtkPolyDataNormals> normals;
+	normals->SetInputConnection(Surface->GetOutputPort());
+	normals->FlipNormalsOn();
+	normals->Update();
+	return normals;
+}
+
+vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
+	vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
+	vtkNew<vtkStaticCleanPolyData> cleaned;
+	cleaned->SetInputConnection(normals->GetOutputPort());
+	cleaned->SetTolerance(1e-3);
+	cleaned->Update();
+	return cleaned;
+}
+
+vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
+	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.8;
-  	decimate->SetInputData(Surface->GetOutput());
+	float reduction = 0.7;
+  	decimate->SetInputData(cleaned->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
   	decimate->Update();

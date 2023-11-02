@@ -55,9 +55,9 @@ set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response
 include_directories(vtkbool)
 add_subdirectory(vtkbool)
 add_executable(mainTPMS mainTPMS.cpp Utils.cpp TPMSsolidGenerator.cpp TPMSsheetGenerator.cpp Tpms.cpp)
-target_link_libraries(mainTPMS PRIVATE vtkBool ${VTK_LIBRARIES}
+# target_link_libraries(mainTPMS PRIVATE vtkBool ${VTK_LIBRARIES}
+target_link_libraries(mainTPMS PRIVATE ${VTK_LIBRARIES}
 )
-#target_compile_definitions(Isosurface PRIVATE ${VTK_DEFINITIONS}) #was in branch vtk_v8
 # vtk_module_autoinit is needed
 vtk_module_autoinit(
   TARGETS mainTPMS
