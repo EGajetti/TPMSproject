@@ -139,7 +139,7 @@ vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.8;
+	float reduction = 0.7;
   	decimate->SetInputData(cleaned->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
@@ -148,40 +148,9 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 }
 
 
-
-// vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation() {
-// 	vtkNew<vtkQuadricDecimation> decimate;
-// 	float reduction = 0.8;
-//   	decimate->SetInputData(Surface->GetOutput());
-//   	decimate->SetTargetReduction(reduction);
-//   	decimate->VolumePreservationOn();
-//   	decimate->Update();
-// 	return decimate;
-// }
-
-// vtkNew <vtkPolyDataNormals> Tpms::TpmsNormals(){
-// 	vtkNew<vtkQuadricDecimation> decimate = TpmsQuadricDecimation();
-// 	vtkNew<vtkPolyDataNormals> normals;
-// 	normals->SetInputConnection(decimate->GetOutputPort());
-// 	normals->FlipNormalsOn();
-// 	normals->Update();
-// 	return normals;
-// }
-
-// vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean(){
-// 	vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
-// 	vtkNew<vtkStaticCleanPolyData> cleaned;
-// 	cleaned->SetInputConnection(normals->GetOutputPort());
-// 	cleaned->SetTolerance(1e-2);
-// 	cleaned->Update();
-// 	return cleaned;
-// }
-
 void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
-// void Tpms::TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* cleaned) {
 	vtkNew<vtkSTLWriter> writer;
 	writer->SetInputData(decimate->GetOutput());
-	// writer->SetInputData(cleaned->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();

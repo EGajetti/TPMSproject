@@ -93,7 +93,6 @@ void printTime(clock_t start, clock_t end);
 */
 #ifdef GRAPHICAL
 void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate);
-// void renderSurface(vtkFlyingEdges3D* surface, vtkStaticCleanPolyData* cleaned);
 #endif // GRAPHICAL
 
 

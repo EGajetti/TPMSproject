@@ -81,12 +81,6 @@ int main(int argc, char* argv[])
 	double stlVol = tpms_final.TpmsVolume();
 	double stlArea = tpms_final.TpmsArea();
 
-	// Reducing mesh size
-	// vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation(surface);
-
-	// Flipping the normals
-	// vtkNew<vtkStaticCleanPolyData> cleaned = tpms_final.TpmsClean();
-
 	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
 
 
@@ -99,7 +93,6 @@ int main(int argc, char* argv[])
 
 	if (saveSTL) {
 		tpms_final.TpmsWriteToSTL(out_file,decimate);
-		// tpms_final.TpmsWriteToSTL(out_file, cleaned);
 	}
 
 
@@ -114,7 +107,6 @@ int main(int argc, char* argv[])
 #ifdef GRAPHICAL
 	if (graph)
 		renderSurface(surface, decimate);
-		// renderSurface(surface, cleaned);
 #endif // GRAPHICAL
 
 

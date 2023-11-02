@@ -56,12 +56,12 @@ public:
 	double TpmsArea();
 
 	/**
-	 * \brief cleaning the mesh after surface
+	 * \brief Cleaning the mesh after isosurface
 	*/
 	vtkNew <vtkStaticCleanPolyData> TpmsClean();
 
 	/**
-	 * \brief reeducing the mesh
+	 * \brief Reducing mesh size
 	*/
 	vtkNew <vtkQuadricDecimation> TpmsQuadricDecimation();
 
@@ -70,20 +70,6 @@ public:
 	*/
 	vtkNew<vtkPolyDataNormals> TpmsNormals();
 
-	// /**
-	//  * \brief Reduce the mesh
-	// */
-	// vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation();
-
-	// /**
-	//  * \brief Flip normals orientiation
-	// */
-	// vtkNew<vtkPolyDataNormals> TpmsNormals();
-
-	// /**
-	//  * \brief Clean the otuput mesh
-	// */
-	// vtkNew<vtkStaticCleanPolyData> TpmsClean();
 
 	/**
 	*  \brief Write the Tpms to the stl file
