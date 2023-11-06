@@ -119,19 +119,51 @@ double Tpms::TpmsArea() {
 	return stlArea;
 }
 
+vtkNew <vtkPolyDataNormals> Tpms::TpmsNormals() {
+	vtkNew<vtkQuadricDecimation> decimate = TpmsQuadricDecimation(Surface);
+	vtkNew<vtkPolyDataNormals> normals;
+	normals->SetInputConnection(decimate->GetOutputPort());
+	normals->FlipNormalsOn();
+	normals->Update();
+	return normals;
+}
+
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS) {
 	vtkNew<vtkQuadricDecimation> decimate;
 	float reduction = 0.9;
-  	decimate->SetInputData(Surface->GetOutput());
-	// decimate->SetInputData(intersectTPMS->GetOutput());
+  	// decimate->SetInputData(normals->GetOutput());
+	decimate->SetInputData(intersectTPMS->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
   	decimate->Update();
 	return decimate;
 }
 
-vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimation* decimate){
 
+// vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
+// 	vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
+// 	vtkNew<vtkStaticCleanPolyData> cleaned;
+// 	cleaned->SetInputConnection(normals->GetOutputPort());
+// 	cleaned->SetTolerance(1e-3);
+// 	cleaned->Update();
+// 	return cleaned;
+// }
+
+// vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
+// 	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
+// 	vtkNew<vtkQuadricDecimation> decimate;
+// 	float reduction = 0.7;
+//   	decimate->SetInputData(cleaned->GetOutput());
+//   	decimate->SetTargetReduction(reduction);
+//   	decimate->VolumePreservationOn();
+//   	decimate->Update();
+// 	return decimate;
+// }
+
+
+
+vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(){
+	vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
 	// Creation of the box to intersect
 	vtkNew<vtkCubeSource> cubo;
 	// Placing the center at the center or the TPMS (which goes from 0 to numCell*scaleVtk)
@@ -146,9 +178,10 @@ vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(vtkQuadricDecimation* decim
 	// Creating the boolean filter
 	vtkNew<vtkPolyDataBooleanFilter> intersezione;
 	intersezione->SetInputConnection(0, cubo->GetOutputPort());
-	intersezione->SetInputData(1, decimate->GetOutput());
+	// intersezione->SetInputData(1, decimate->GetOutput());
+	intersezione->SetInputData(1, normals->GetOutput());
 	// For some reason, difference works as intersection and viceversa
-	intersezione->SetOperModeToDifference();
+	intersezione->SetOperModeToIntersection();
 	intersezione->Update();
 	return intersezione;
 }

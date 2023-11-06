@@ -8,8 +8,7 @@
 #include <vtkQuadricDecimation.h>
 #include <vtkCubeSource.h>
 #include <vtkPolyDataBooleanFilter.h>
-#include <vtkSmartPointer.h>
-// #include <vtkPolyDataWriter.h>
+#include <vtkPolyDataNormals.h>
 
 
 
@@ -68,7 +67,22 @@ public:
 	/**
 	 * \brief Intersect with a cube to clean the boundaries
 	*/
-	vtkNew<vtkPolyDataBooleanFilter> TpmsIntersect(vtkQuadricDecimation* decimate);
+	vtkNew<vtkPolyDataBooleanFilter> TpmsIntersect();
+
+	// 	/**
+	//  * \brief Cleaning the mesh after isosurface
+	// */
+	// vtkNew <vtkStaticCleanPolyData> TpmsClean();
+
+	// /**
+	//  * \brief Reducing mesh size
+	// */
+	// vtkNew <vtkQuadricDecimation> TpmsQuadricDecimation();
+
+	/**
+	 * \brief Flip normals orientiation
+	*/
+	vtkNew<vtkPolyDataNormals> TpmsNormals();
 
 	/**
 	*  \brief Write the Tpms to the stl file

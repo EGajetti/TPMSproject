@@ -82,10 +82,10 @@ int main(int argc, char* argv[])
 	double stlArea = tpms_final.TpmsArea();
 
 	// Reducing mesh size
-	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation(surface);
+	// vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation(surface);
 
 	// Intersecting to cut the coarse edges
-	vtkNew<vtkPolyDataBooleanFilter> intersezione = tpms_final.TpmsIntersect(decimate);
+	vtkNew<vtkPolyDataBooleanFilter> intersezione = tpms_final.TpmsIntersect();
 
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
@@ -95,8 +95,8 @@ int main(int argc, char* argv[])
 
 
 	vtkNew<vtkSTLWriter> writer;
-	writer->SetInputData(decimate->GetOutput());
-	// writer->SetInputData(intersezione->GetOutput());
+	// writer->SetInputData(decimate->GetOutput());
+	writer->SetInputData(intersezione->GetOutput());
 	writer->SetFileName("Gyroid.stl");
 	writer->SetFileTypeToBinary();
 	writer->Update();
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 
 #ifdef GRAPHICAL
 	if (graph)
-		renderSurface(surface, decimate);
+		renderSurface(surface, intersezione);
 #endif // GRAPHICAL
 
 

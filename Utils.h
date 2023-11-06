@@ -25,6 +25,7 @@
 #include <vtkNamedColors.h>
 #include <vtkProperty.h>
 #include <vtkQuadricDecimation.h>
+#include <vtkPolyDataBooleanFilter.h>
 
 #endif // GRAPHICAL
 
@@ -91,7 +92,8 @@ void printTime(clock_t start, clock_t end);
 * @param surface	vtkFlyingEdges3D object which contains the isosurface
 */
 #ifdef GRAPHICAL
-void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate);
+// void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate);
+void renderSurface(vtkFlyingEdges3D* surface, vtkPolyDataBooleanFilter* intersezione);
 #endif // GRAPHICAL
 
 
