@@ -111,19 +111,6 @@ void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcell
 				}
 	} break;
 
-
-		// F_RD
-	case 'N': {
-		for (int z = 0; z < dimz; z++)
-			for (int y = 0; y < dimy; y++)
-				for (int x = 0; x < dimx; x++) {
-					scal = 3. * (cosv[x] + cosv[y] + cosv[z]) + 4. * cosv[x] * cosv[y] * cosv[z] - rstart;
-					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
-					*a = scal;
-					temp++;
-				}
-	} break;
-
 	}
 
 	delete[] cosv;
