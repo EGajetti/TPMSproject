@@ -24,11 +24,12 @@ When having VTK installed on your pc, clone the repository in your preferred fol
 $ git clone https://github.com/MAHTEP/TPMSproject.git
 
 Then create a new folder *build* and enter it:
-
+'''
 $ mkdir build
 $ cd build
-
+'''
 Now you need to compile the project, using:
-
+'''
 $ cmake .. -GNinja
 $ cmake --build .
+'''
