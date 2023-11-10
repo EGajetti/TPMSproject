@@ -9,6 +9,7 @@
 #include <vtkCubeSource.h>
 #include <vtkPolyDataBooleanFilter.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkStaticCleanPolyData.h>
 
 
 
@@ -62,17 +63,17 @@ public:
 	/**
 	 * \brief Reduce the mesh
 	*/
-	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS);
+	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation();
 
 	/**
 	 * \brief Intersect with a cube to clean the boundaries
 	*/
 	vtkNew<vtkPolyDataBooleanFilter> TpmsIntersect();
 
-	// 	/**
-	//  * \brief Cleaning the mesh after isosurface
-	// */
-	// vtkNew <vtkStaticCleanPolyData> TpmsClean();
+		/**
+	 * \brief Cleaning the mesh after isosurface
+	*/
+	vtkNew <vtkStaticCleanPolyData> TpmsClean();
 
 	// /**
 	//  * \brief Reducing mesh size
@@ -109,7 +110,7 @@ public:
 protected:
 
 	int nPoints;
-	float scaleVtk;
+	int scaleVtk;
 	int numCellX;
 	int numCellY;
 	int numCellZ;

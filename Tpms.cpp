@@ -64,7 +64,7 @@ void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
 	// Better to have a sligthly larger extent, so to cut coarse edges a posteriori
-	int extent[6] = { -10, nPoints * numCellX + 10, -10, nPoints * numCellY + 10, -10, nPoints * numCellZ + 10 };
+	int extent[6] = { -2*scaleVtk - 1, nPoints * numCellX + 2*scaleVtk + 1, -2*scaleVtk - 1, nPoints * numCellY + 2 * scaleVtk + 1, -2*scaleVtk - 1, nPoints * numCellZ + 2*scaleVtk + 1};
 	// int extent[6] = { -1, nPoints * numCellX , -1, nPoints * numCellY , -1, nPoints * numCellZ };
 
 	Volume->SetExtent(extent);
@@ -72,7 +72,7 @@ void Tpms::TpmsSet(string type) {
 
 	// Using the first one will result in deformed cells
 	//double spacing[3] = { 1. / nPoints / numCellX * scaleVtk, 1. / nPoints / numCellY * scaleVtk, 1. / nPoints / numCellZ * scaleVtk };
-	double spacing[3] = { 1. / nPoints * scaleVtk, 1. / nPoints * scaleVtk, 1. / nPoints * scaleVtk };
+	double spacing[3] = { 1. / nPoints * float(scaleVtk), 1. / nPoints * float(scaleVtk), 1. / nPoints * float(scaleVtk) };
 
 	Volume->SetSpacing(spacing);
 
@@ -83,7 +83,7 @@ void Tpms::TpmsSet(string type) {
 
 	}
 	else if (type == "sheet"){
-		TpmsSheetGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rStart, Volume);
+		TpmsSheetGenerator(nPoints, numCellX, numCellY, numCellZ, scaleVtk, typeTpms, rStart, Volume);
 	}
 	else{
 		cout << "Invalid TPMS type" << endl;
@@ -120,34 +120,37 @@ double Tpms::TpmsArea() {
 }
 
 vtkNew <vtkPolyDataNormals> Tpms::TpmsNormals() {
-	vtkNew<vtkQuadricDecimation> decimate = TpmsQuadricDecimation(Surface);
+	// vtkNew<vtkQuadricDecimation> decimate = TpmsQuadricDecimation(Surface);
+
 	vtkNew<vtkPolyDataNormals> normals;
-	normals->SetInputConnection(decimate->GetOutputPort());
+	// normals->SetInputConnection(decimate->GetOutputPort());
+	normals->SetInputConnection(Surface->GetOutputPort());
 	normals->FlipNormalsOn();
 	normals->Update();
 	return normals;
 }
 
-vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* intersectTPMS) {
+vtkNew<vtkStaticCleanPolyData> Tpms::TpmsClean() {
+	vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
+	vtkNew<vtkStaticCleanPolyData> cleaned;
+	cleaned->SetInputConnection(normals->GetOutputPort());
+	cleaned->SetTolerance(1e-3);
+	cleaned->Update();
+	return cleaned;
+}
+
+
+vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation() {
+	vtkNew<vtkStaticCleanPolyData> cleaned = TpmsClean();
 	vtkNew<vtkQuadricDecimation> decimate;
 	float reduction = 0.9;
   	// decimate->SetInputData(normals->GetOutput());
-	decimate->SetInputData(intersectTPMS->GetOutput());
+	decimate->SetInputData(cleaned->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
   	decimate->Update();
 	return decimate;
 }
-
-
-// vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
-// 	vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
-// 	vtkNew<vtkStaticCleanPolyData> cleaned;
-// 	cleaned->SetInputConnection(normals->GetOutputPort());
-// 	cleaned->SetTolerance(1e-3);
-// 	cleaned->Update();
-// 	return cleaned;
-// }
 
 // vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 // 	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
@@ -163,7 +166,9 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(vtkFlyingEdges3D* inter
 
 
 vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(){
-	vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
+	// vtkNew<vtkPolyDataNormals> normals = TpmsNormals();
+	// vtkNew<vtkStaticCleanPolyData> cleaned = TpmsClean();
+	vtkNew<vtkQuadricDecimation> decimate = TpmsQuadricDecimation();
 	// Creation of the box to intersect
 	vtkNew<vtkCubeSource> cubo;
 	// Placing the center at the center or the TPMS (which goes from 0 to numCell*scaleVtk)
@@ -178,8 +183,8 @@ vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(){
 	// Creating the boolean filter
 	vtkNew<vtkPolyDataBooleanFilter> intersezione;
 	intersezione->SetInputConnection(0, cubo->GetOutputPort());
-	// intersezione->SetInputData(1, decimate->GetOutput());
-	intersezione->SetInputData(1, normals->GetOutput());
+	intersezione->SetInputData(1, decimate->GetOutput());
+	// intersezione->SetInputData(1, normals->GetOutput());
 	// For some reason, difference works as intersection and viceversa
 	intersezione->SetOperModeToIntersection();
 	intersezione->Update();

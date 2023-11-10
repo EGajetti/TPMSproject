@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	int numCellY = stoi(var_value[4]);
 	int numCellZ = stoi(var_value[5]);
 
-	float tarSize = stof(var_value[6]);
+	int tarSize = stoi(var_value[6]);
 
 	double* origin = convertOrigin(var_value[7]);
 

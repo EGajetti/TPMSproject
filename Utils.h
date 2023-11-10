@@ -57,7 +57,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 * @param rstart     Start parameter
 * @param volume	    VTKImageData
 */
-void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume);
+void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, const int scaleVtk, char type, const float rstart, vtkImageData* volume);
 
 
 

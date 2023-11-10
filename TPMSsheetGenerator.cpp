@@ -6,11 +6,11 @@ using namespace std;
 
 // Implementation of the function defined in Utils.h
 
-void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume)
+void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, const int scaleVtk, char type, const float rstart, vtkImageData* volume)
 {
-	int dimx = npoints * numcellx + 10;
-	int dimy = npoints * numcelly + 10;
-	int dimz = npoints * numcellz + 10;
+	int dimx = npoints * numcellx + 2*scaleVtk + 1;
+	int dimy = npoints * numcelly + 2*scaleVtk + 1;
+	int dimz = npoints * numcellz + 2*scaleVtk + 1;
 	int dimension = max({dimx, dimy, dimz});
 
 	const float pi = 2 * 3.14159265358979323846 / npoints;
