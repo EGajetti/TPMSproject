@@ -2,6 +2,9 @@
 #include <vtkNew.h>
 #include <vtkMassProperties.h>
 #include <vtkQuadricDecimation.h>
+#include <vtkCubeSource.h>
+#include <vtkAppendPolyData.h>
+#include <vtkStaticCleanPolyData.h>
 
 
 #include "Definition.h"
@@ -83,6 +86,28 @@ int main(int argc, char* argv[])
 
 	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
 
+	double originCubo[3];
+	for (int i = 0; i < 2; i++)
+		originCubo[i] = origin[i] + tarSize/2.0;
+	originCubo[2] = origin[2] + tarSize + 1.0;
+
+	vtkNew<vtkCubeSource> cubo;
+	cubo->SetXLength(tarSize);
+	cubo->SetYLength(tarSize);
+	cubo->SetZLength(2.0);
+	cubo->SetCenter(originCubo);
+	cubo->Update();
+
+	vtkNew<vtkAppendPolyData> appendi;
+	appendi->AddInputData(cubo->GetOutput());
+	appendi->AddInputData(decimate->GetOutput());
+	appendi->Update();
+
+	vtkNew<vtkStaticCleanPolyData> cleanAppend;
+	cleanAppend->SetInputConnection(appendi->GetOutputPort());
+	cleanAppend->SetTolerance(1e-3);
+	cleanAppend->Update();
+
 
 	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
 
@@ -92,7 +117,7 @@ int main(int argc, char* argv[])
 	// Saving to .stl file
 
 	if (saveSTL) {
-		tpms_final.TpmsWriteToSTL(out_file,decimate);
+		tpms_final.TpmsWriteToSTL(out_file,cleanAppend);
 	}
 
 
@@ -106,7 +131,7 @@ int main(int argc, char* argv[])
 
 #ifdef GRAPHICAL
 	if (graph)
-		renderSurface(surface, decimate);
+		renderSurface(surface, appendi);
 #endif // GRAPHICAL
 
 

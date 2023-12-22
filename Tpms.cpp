@@ -148,7 +148,8 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 }
 
 
-void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
+// void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
+void Tpms::TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* decimate) {	
 	vtkNew<vtkSTLWriter> writer;
 	writer->SetInputData(decimate->GetOutput());
 	writer->SetFileName(filename);

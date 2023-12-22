@@ -75,8 +75,8 @@ public:
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
-	// void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* cleaned);
+	// void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
+	void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* cleaned);
 
 
 	/**

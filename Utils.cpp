@@ -66,7 +66,8 @@ double* convertOrigin(string origin) {
 
 #ifdef GRAPHICAL
 
-void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate) {
+// void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate) {
+void renderSurface(vtkFlyingEdges3D* surface, vtkAppendPolyData* decimate) {	
 
 	vtkNew<vtkNamedColors> colors;
 
