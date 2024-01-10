@@ -1,5 +1,5 @@
 /*
- * This file is part of {{ tpmsGenerator }}.
+ * This file is part of {{ tpmsProject }}.
  *
  * .Package for creating a Tpms object
  *  Authors: E. Gajetti, U. Follo
@@ -64,7 +64,7 @@ void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
 	// Better to have a sligthly larger extent, so to cut coarse edges a posteriori
-	int extent[6] = { -2, nPoints * numCellX + 2, -2, nPoints * numCellY + 2, -2, nPoints * numCellZ + 2 };
+	int extent[6] = { -5, nPoints * numCellX + 5, -5, nPoints * numCellY + 5, -5, nPoints * numCellZ + 5 };
 	// int extent[6] = { -1, nPoints * numCellX , -1, nPoints * numCellY , -1, nPoints * numCellZ };
 
 	Volume->SetExtent(extent);

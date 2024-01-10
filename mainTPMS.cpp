@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		var_value = readConfiguration("configuration.txt");
-		out_file = "myTPMS.stl";
+		out_file = (char*) "myTPMS.stl";
 	}
 
 	clock_t t0 = clock();
@@ -58,11 +58,16 @@ int main(int argc, char* argv[])
 
 	float rstart = stof(var_value[8]);
 
+	// Thickness of the walls
+	// Upper wall (+1.0 to have a thicker wall, then it will cut via blockMesh)
+	float thick1 = stof(var_value[9]) + 1.0;
+	// Lower wall
+	float thick2 = stof(var_value[10]) + 1.0;
 
 	// Saving TPMS to stl file and display the TPMS
 
-	bool saveSTL = stoi(var_value[9]);
-	bool graph = stoi(var_value[10]);
+	bool saveSTL = stoi(var_value[11]);
+	bool graph = stoi(var_value[12]);
 
 
 	// Vtk objects
@@ -86,20 +91,33 @@ int main(int argc, char* argv[])
 
 	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
 
-	double originCubo[3];
+	double originCubo1[3];
 	for (int i = 0; i < 2; i++)
-		originCubo[i] = origin[i] + tarSize/2.0;
-	originCubo[2] = origin[2] + tarSize + 1.0;
+		originCubo1[i] = origin[i] + tarSize/2.0;
+	originCubo1[2] = origin[2] + tarSize + thick1/2.0;
 
-	vtkNew<vtkCubeSource> cubo;
-	cubo->SetXLength(tarSize);
-	cubo->SetYLength(tarSize);
-	cubo->SetZLength(2.0);
-	cubo->SetCenter(originCubo);
-	cubo->Update();
+	vtkNew<vtkCubeSource> cubo1;
+	cubo1->SetXLength(tarSize + 1.0);
+	cubo1->SetYLength(tarSize + 1.0);
+	cubo1->SetZLength(thick1);
+	cubo1->SetCenter(originCubo1);
+	cubo1->Update();
+
+	double originCubo2[3];
+	for (int i = 0; i < 2; i++)
+		originCubo2[i] = origin[i] + tarSize/2.0;
+	originCubo2[2] = origin[2] - thick2/2.0;
+
+	vtkNew<vtkCubeSource> cubo2;
+	cubo2->SetXLength(tarSize + 1.0);
+	cubo2->SetYLength(tarSize + 1.0);
+	cubo2->SetZLength(thick2);
+	cubo2->SetCenter(originCubo2);
+	cubo2->Update();
 
 	vtkNew<vtkAppendPolyData> appendi;
-	appendi->AddInputData(cubo->GetOutput());
+	appendi->AddInputData(cubo1->GetOutput());
+	appendi->AddInputData(cubo2->GetOutput());
 	appendi->AddInputData(decimate->GetOutput());
 	appendi->Update();
 

@@ -27,6 +27,12 @@ Center = [0,0,0]
 # Level set constant c
 C value = 0.3
 
+# Thickness of the upper wall
+thick1 = 1.0
+
+# Thickness of the lower wall 
+thick2 = 1.0
+
 # Save final TPMS to .stl file: yes = 1, no = 0
 Save to STL = 1
 
