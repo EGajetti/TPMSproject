@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/eleonora/dev/my-tests/TPMSproject
+CMAKE_SOURCE_DIR = /home/eleonora/dev/singularity/TPMSproject
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/eleonora/dev/my-tests/TPMSproject/build
+CMAKE_BINARY_DIR = /home/eleonora/dev/singularity/TPMSproject/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -85,56 +85,11 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"development\" \"runtime\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-.PHONY : list_install_components/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/eleonora/dev/my-tests/TPMSproject/build/CMakeFiles /home/eleonora/dev/my-tests/TPMSproject/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/eleonora/dev/singularity/TPMSproject/build/CMakeFiles /home/eleonora/dev/singularity/TPMSproject/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/eleonora/dev/my-tests/TPMSproject/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/eleonora/dev/singularity/TPMSproject/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -173,32 +128,6 @@ mainTPMS: cmake_check_build_system
 mainTPMS/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mainTPMS.dir/build.make CMakeFiles/mainTPMS.dir/build
 .PHONY : mainTPMS/fast
-
-#=============================================================================
-# Target rules for targets named vtkBool
-
-# Build rule for target.
-vtkBool: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vtkBool
-.PHONY : vtkBool
-
-# fast build rule for target.
-vtkBool/fast:
-	$(MAKE) $(MAKESILENT) -f vtkbool/module/CMakeFiles/vtkBool.dir/build.make vtkbool/module/CMakeFiles/vtkBool.dir/build
-.PHONY : vtkBool/fast
-
-#=============================================================================
-# Target rules for targets named vtkBool-hierarchy
-
-# Build rule for target.
-vtkBool-hierarchy: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vtkBool-hierarchy
-.PHONY : vtkBool-hierarchy
-
-# fast build rule for target.
-vtkBool-hierarchy/fast:
-	$(MAKE) $(MAKESILENT) -f vtkbool/module/CMakeFiles/vtkBool-hierarchy.dir/build.make vtkbool/module/CMakeFiles/vtkBool-hierarchy.dir/build
-.PHONY : vtkBool-hierarchy/fast
 
 TPMSsheetGenerator.o: TPMSsheetGenerator.cpp.o
 .PHONY : TPMSsheetGenerator.o
@@ -327,14 +256,8 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... install"
-	@echo "... install/local"
-	@echo "... install/strip"
-	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... vtkBool-hierarchy"
 	@echo "... mainTPMS"
-	@echo "... vtkBool"
 	@echo "... TPMSsheetGenerator.o"
 	@echo "... TPMSsheetGenerator.i"
 	@echo "... TPMSsheetGenerator.s"
