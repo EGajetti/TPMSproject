@@ -27,6 +27,8 @@
 #include <vtkQuadricDecimation.h>
 #include <vtkStaticCleanPolyData.h>
 #include <vtkAppendPolyData.h>
+#include <vtkIntersectionPolyDataFilter.h>
+#include <vtkBooleanOperationPolyDataFilter.h>
 
 #endif // GRAPHICAL
 
@@ -93,7 +95,7 @@ void printTime(clock_t start, clock_t end);
 * @param surface	vtkFlyingEdges3D object which contains the isosurface
 */
 #ifdef GRAPHICAL
-void renderSurface(vtkFlyingEdges3D* surface, vtkAppendPolyData* decimate);
+void renderSurface(vtkFlyingEdges3D* surface, vtkBooleanOperationPolyDataFilter* decimate);
 #endif // GRAPHICAL
 
 

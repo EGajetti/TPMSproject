@@ -1,25 +1,25 @@
 # Configuration file for TPMS generator
 
 # Increment number final mesh (reduce in case of several unit cells)
-Number of final points = 80
+Number of final points = 70
 
 # TPMS type: P, G, D, I, S, F, N (for the full names, see the file TPMSGenerator.cpp)
-TPMSType = G
+TPMSType =G
 
 # TPMS type: solid, sheet 
 Type = sheet
 
 # Number of unit cells per coordinate direction X in the lattice
-Number of cells = 1
+Number of cells = 2
 
 # Number of unit cells per coordinate direction Y in the lattice
-Number of cells = 1
+Number of cells = 2
 
 # Number of unit cells per coordinate direction Z in the lattice
-Number of cells = 1
+Number of cells = 2
 
 # Target size of the lattice
-Target size = 10
+Target size = 5
 
 # Center of the lattice
 Center = [0,0,0]

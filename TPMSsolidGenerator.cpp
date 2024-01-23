@@ -13,21 +13,21 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 	int dimz = npoints * numcellz + 1;
 	int dimension = max({dimx, dimy, dimz});
 
-	const float pi = 2 * 3.14159265358979323846 / npoints;
+	const float pi2 = 2 * 3.14159265358979323846 / npoints;
 	float scal = 0.;
 
 	float* cosv = new float[dimension];
 	for (int i = 0; i < dimension; i++)
-		cosv[i] = cos(pi * i);
+		cosv[i] = cos(pi2 * i);
 
 	float* senv = new float[dimension];
 	for (int i = 0; i < dimension; i++)
-		senv[i] = sin(pi * i);
+		senv[i] = sin(pi2 * i);
 
 	float* cosv_t = new float[dimension];
 	if ((type == 'I') || (type == 'S') || (type == 'F'))
 		for (int i = 0; i < dimension; i++)
-			cosv_t[i] = cos(2 * pi * i);
+			cosv_t[i] = cos(2 * pi2 * i);
 
 	int temp = 0;
 

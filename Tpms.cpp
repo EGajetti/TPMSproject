@@ -139,7 +139,7 @@ vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.7;
+	float reduction = 0.9;
   	decimate->SetInputData(cleaned->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
@@ -147,12 +147,27 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	return decimate;
 }
 
+// vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform(vtkStaticCleanPolyData* decimateCubo) {
+	vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform(vtkQuadricDecimation* decimateCubo) {
+	vtkNew<vtkTransform> trasformazione;
+	trasformazione->Translate(-numCellX*scaleVtk/2.0, -numCellY*scaleVtk/2.0, -numCellZ*scaleVtk/2.0);
+	vtkNew<vtkTransformPolyDataFilter> trasformaCubo;
+	trasformaCubo->SetTransform(trasformazione);
+	trasformaCubo->SetInputData(decimateCubo->GetOutput());
+	trasformaCubo->Update();
+	return trasformaCubo;
+}
 
-// void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
-void Tpms::TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* decimate) {	
+
+// void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {	
+	void Tpms::TpmsWriteToSTL(const char* filename, vtkBooleanOperationPolyDataFilter* trasformaCubo) {	
+
 	vtkNew<vtkSTLWriter> writer;
-	writer->SetInputData(decimate->GetOutput());
+	writer->SetInputData(trasformaCubo->GetOutput());
+	// writer->SetInputData(decimate->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();
 }
+
+

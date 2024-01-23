@@ -8,6 +8,11 @@
 #include <vtkQuadricDecimation.h>
 #include <vtkStaticCleanPolyData.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTransform.h>
+#include <vtkIntersectionPolyDataFilter.h>
+#include <vtkBooleanOperationPolyDataFilter.h>
+
 
 #include "Definition.h"
 #include "Utils.h"
@@ -75,8 +80,13 @@ public:
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	// void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
-	void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* cleaned);
+	void TpmsWriteToSTL(const char* filename, vtkBooleanOperationPolyDataFilter* trasformaCubo);
+	// void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* cleaned);
+
+	/**
+	 * \brief Transform the geometry (i.e. rotating and translating)
+	*/
+	vtkNew<vtkTransformPolyDataFilter> TpmsTransform(vtkQuadricDecimation* decimateCubo);
 
 
 	/**
