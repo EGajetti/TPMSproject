@@ -93,12 +93,14 @@ int main(int argc, char* argv[])
 	double stlVol = tpms_final.TpmsVolume();
 	double stlArea = tpms_final.TpmsArea();
 
+	// Reduce the meshing to improve the grid quality
 	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
 
-	// double originCubo1[3];
-	// for (int i = 0; i < 2; i++)
-	// 	originCubo1[i] = origin[i] + tarSize/2.0;
-	// originCubo1[2] = origin[2] + tarSize + thick1/2.0;
+	// Create two boxes (upper and lower walls)
+	double originCubo1[3];
+	for (int i = 0; i < 2; i++)
+		originCubo1[i] = origin[i] + tarSize/2.0;
+	originCubo1[2] = origin[2] + tarSize + thick1/2.0;
 
 	// vtkNew<vtkCubeSource> cubo1;
 	// cubo1->SetXLength(tarSize + 1.0);
@@ -135,15 +137,13 @@ int main(int argc, char* argv[])
 	vtkNew<vtkTransformPolyDataFilter> TPMStrasforma = tpms_final.TpmsTransform(decimate);
 
 	vtkNew<vtkCubeSource> box;
-	box->SetXLength(5.0);
-	box->SetYLength(5.0);
-	box->SetZLength(5.0);
+	box->SetXLength(tarSize);
+	box->SetYLength(tarSize);
+	box->SetZLength(tarSize);
 	box->SetCenter(0.0, 0.0, 0.0);
 	box->Update();
 
-  	// auto triang1 = vtkSmartPointer<vtkTriangleFilter>::New();
-	// triang1->SetInputData(TPMStrasforma->GetOutput());
-	// triang1->Update();
+
 	auto triang2 = vtkSmartPointer<vtkTriangleFilter>::New();
 	triang2->SetInputData(box->GetOutput());
 	triang2->Update();
@@ -153,18 +153,27 @@ int main(int argc, char* argv[])
 	boxRefined->SetNumberOfSubdivisions(5);
 	boxRefined->Update();
 
-	cout << "Inizio a intersecare" << endl;
-  vtkNew<vtkBooleanOperationPolyDataFilter> booleanOperation;
+   vtkNew<vtkBooleanOperationPolyDataFilter> booleanOperation;
    booleanOperation->SetOperationToIntersection();
    booleanOperation->SetInputData(0, TPMStrasforma->GetOutput());
    booleanOperation->SetInputData(1, boxRefined->GetOutput());
    booleanOperation->Update();
 
-	cout << "fine intersecare" << endl;
+	// vtkNew<vtkStaticCleanPolyData> cleanedTPMS;
+	// cleanedTPMS->SetInputConnection(booleanOperation->GetOutputPort());
+	// cleanedTPMS->SetTolerance(1e-3);
+	// cleanedTPMS->Update();
 
-	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
+	// vtkNew<vtkSTLWriter> writerTPMS;
+	// writerTPMS->SetInputData(cleanedTPMS->GetOutput());
+	// writerTPMS->SetFileName("myTPMS_cleaned.stl");
+	// writerTPMS->SetFileTypeToBinary();
+	// writerTPMS->Update();
 
-	cout << "Volume TPMS: " << volFracFinal << endl;
+
+	// double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
+
+	// cout << "Volume TPMS: " << volFracFinal << endl;
 
 
 	// Saving to .stl file
