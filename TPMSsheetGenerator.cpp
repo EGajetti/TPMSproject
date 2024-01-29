@@ -6,7 +6,7 @@ using namespace std;
 
 // Implementation of the function defined in Utils.h
 
-void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume)
+void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rvalue, vtkImageData* volume)
 {
 	int dimx = npoints * numcellx + 1;
 	int dimy = npoints * numcelly + 1;
@@ -39,9 +39,9 @@ void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = -(cosv[x] + cosv[y] + cosv[z]);
+					scal = (cosv[x] + cosv[y] + cosv[z]);
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
-					*a = (scal + rstart)*(scal - rstart);
+					*a = (scal + rvalue)*(scal - rvalue);
 					temp++;
 				}
 	} break;
@@ -54,7 +54,7 @@ void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcell
 				for (int x = 0; x < dimx; x++) {
 					scal = cosv[x] * senv[y] + cosv[y] * senv[z] + cosv[z] * senv[x];
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
-					*a = (scal + rstart)*(scal - rstart);
+					*a = (scal + rvalue)*(scal - rvalue);
 					temp++;
 				}
 	} break;
@@ -65,7 +65,7 @@ void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = senv[x] * senv[y] * senv[z] + senv[x] * cosv[y] * cosv[z] + cosv[x] * senv[y] * cosv[z] + cosv[x] * cosv[y] * senv[z] - rstart;
+					scal = senv[x] * senv[y] * senv[z] + senv[x] * cosv[y] * cosv[z] + cosv[x] * senv[y] * cosv[z] + cosv[x] * cosv[y] * senv[z] - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -78,7 +78,7 @@ void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = 2. * (cosv[x] * cosv[y] + cosv[y] * cosv[z] + cosv[z] * cosv[x]) - (cosv_t[x] + cosv_t[y] + cosv_t[z]) - rstart;
+					scal = 2. * (cosv[x] * cosv[y] + cosv[y] * cosv[z] + cosv[z] * cosv[x]) - (cosv_t[x] + cosv_t[y] + cosv_t[z]) - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -91,7 +91,7 @@ void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = cosv_t[x] * senv[y] * cosv[z] + cosv[x] * cosv_t[y] * senv[z] + senv[x] * cosv[y] * cosv_t[z] - rstart;
+					scal = cosv_t[x] * senv[y] * cosv[z] + cosv[x] * cosv_t[y] * senv[z] + senv[x] * cosv[y] * cosv_t[z] - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -104,7 +104,7 @@ void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = -(4. * (cosv[x] * cosv[y] * cosv[z]) - (cosv_t[x] * cosv_t[y] + cosv_t[y] * cosv_t[z] + cosv_t[z] * cosv_t[x])) - rstart;
+					scal = -(4. * (cosv[x] * cosv[y] * cosv[z]) - (cosv_t[x] * cosv_t[y] + cosv_t[y] * cosv_t[z] + cosv_t[z] * cosv_t[x])) - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;

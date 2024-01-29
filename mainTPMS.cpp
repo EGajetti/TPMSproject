@@ -43,32 +43,35 @@ int main(int argc, char* argv[])
 	char TPMSname = var_value[1][0];
 	string type = var_value[2];
 
-	int numCellX = stoi(var_value[3]);
-	int numCellY = stoi(var_value[4]);
-	int numCellZ = stoi(var_value[5]);
+	// int numCellX = stoi(var_value[3]);
+	// int numCellY = stoi(var_value[4]);
+	// int numCellZ = stoi(var_value[5]);
 
-	float tarSize = stof(var_value[6]);
+	int numCellX = 2;
+	int numCellY = 2;
+	int numCellZ = 2;
 
-	double* origin = convertOrigin(var_value[7]);
+	float tarSize = stof(var_value[3]);
 
-	float rvalue = stof(var_value[8]);
+	double* origin = convertOrigin(var_value[4]);
+
+	float rvalue = stof(var_value[5]);
 
 	// Thickness of the walls
 	// Upper wall (+1.0 to have a thicker wall, then it will cut via blockMesh)
-	float thick1 = stof(var_value[9]) + 1.0;
+	float thick1 = stof(var_value[6]) + 1.0;
 	// Lower wall
-	float thick2 = stof(var_value[10]) + 1.0;
+	float thick2 = stof(var_value[7]) + 1.0;
 
 	// Saving TPMS to stl file and display the TPMS
 
-	bool saveSTL = stoi(var_value[11]);
-	bool graph = stoi(var_value[12]);
+	bool saveSTL = stoi(var_value[8]);
+	bool graph = stoi(var_value[9]);
 
 
 	// Vtk objects
 
 	vtkNew<vtkImageData> volume;
-	vtkNew<vtkMassProperties> massProperties;
 #ifdef USE_FLYING_EDGES
 	vtkNew<vtkFlyingEdges3D> surface;
 #else
@@ -78,25 +81,11 @@ int main(int argc, char* argv[])
 	// Generation of the final TPMS lattice object
 
 	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rvalue);
-	tpms_final.SetVtkObjects(volume, surface, massProperties);
+	tpms_final.SetVtkObjects(volume, surface);
 	tpms_final.TpmsSet(type);
 
-
-	// vtkNew<vtkStaticCleanPolyData> cleanAppend;
-	// cleanAppend->SetInputConnection(appendi->GetOutputPort());
-	// cleanAppend->SetTolerance(1e-3);
-	// cleanAppend->Update();
-
 	
-	// vtkNew<vtkBooleanOperationPolyDataFilter> intersectTPMS = tpms_final.TpmsIntersecting(tarSize, origin);
-
 	vtkNew<vtkAppendPolyData> appendTPMS = tpms_final.TpmsAppend(tarSize, origin, thick1, thick2);
-
-
-	// double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
-
-	// cout << "Volume TPMS: " << volFracFinal << endl;
-
 
 	// Saving to .stl file
 

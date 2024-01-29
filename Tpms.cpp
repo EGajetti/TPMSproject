@@ -44,18 +44,16 @@ Tpms::~Tpms() {}
 //--------- Class methods --------------//
 
 #ifdef USE_FLYING_EDGES
-void Tpms::SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties) {
+void Tpms::SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface) {
 	Volume = volume;
 	Surface = surface;
-	massProperties = massproperties;
 }
 #else
 
 
-void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties) {
+void Tpms::SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface) {
 	Volume = volume;
 	Surface = surface;
-	massProperties = massproperties;
 }
 #endif
 
@@ -98,32 +96,23 @@ void Tpms::TpmsSet(string type) {
 }
 
 
-double Tpms::TpmsVolume() {
-	Surface->RemoveAllInputs();
-	Surface->SetInputData(Volume);
-	Surface->ComputeNormalsOn();
-	Surface->SetValue(0, isoValue);
-	Surface->Update();
-	massProperties->SetInputConnection(Surface->GetOutputPort());
+double Tpms::TpmsVolume(vtkBooleanOperationPolyDataFilter* intersectTPMS, float tarSize) {
+
+	vtkNew<vtkMassProperties> massProperties;
+
+	double cubeVolume = (tarSize*1.1)*(tarSize*1.1)*(tarSize*1.1);
+
+	massProperties->SetInputConnection(intersectTPMS->GetOutputPort());
 	massProperties->Update();
 	double stlVol = massProperties->GetVolume();
+
+	double porosity = 1.0 - stlVol/cubeVolume;
+
 	cout << "Evaluated volume: " << stlVol << endl;
-	return stlVol;
+	cout << "Fluid porosity: " << porosity << endl;
+	return porosity;
 }
 
-
-double Tpms::TpmsArea() {
-	Surface->RemoveAllInputs();
-	Surface->SetInputData(Volume);
-	Surface->ComputeNormalsOn();
-	Surface->SetValue(0, isoValue);
-	Surface->Update();
-	massProperties->RemoveAllInputs();
-	massProperties->SetInputConnection(Surface->GetOutputPort());
-	massProperties->Update();
-	double stlArea = massProperties->GetSurfaceArea();
-	return stlArea;
-}
 
 
 vtkNew <vtkPolyDataNormals> Tpms::TpmsNormals() {
@@ -189,6 +178,8 @@ vtkNew<vtkBooleanOperationPolyDataFilter> Tpms::TpmsIntersecting(float tarSize, 
     intersectTPMS->SetInputData(0, translateTPMS->GetOutput());
     intersectTPMS->SetInputData(1, boxRefined->GetOutput());
     intersectTPMS->Update();
+
+	double porosity = TpmsVolume(intersectTPMS, tarSize);
 
 	return intersectTPMS;
 	}

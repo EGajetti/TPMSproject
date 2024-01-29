@@ -10,7 +10,6 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
-#include <vtkIntersectionPolyDataFilter.h>
 #include <vtkBooleanOperationPolyDataFilter.h>
 #include <vtkCubeSource.h>
 #include <vtkTriangleFilter.h>
@@ -56,12 +55,7 @@ public:
 	/**
 	*  \brief Get the TPMS volume
 	*/
-	double TpmsVolume();
-
-	/**
-	*  \brief Get the TPMS area
-	*/
-	double TpmsArea();
+	double TpmsVolume(vtkBooleanOperationPolyDataFilter* intersectTPMS, float tarSize);
 
 	/**
 	 * \brief Cleaning the mesh after isosurface
@@ -104,12 +98,11 @@ public:
 	*  \brief Set the pointers to the vtk object of the class
 	*  @param volume vtkImageData object used for the TPMS stucture
 	*  @param surface vtkMarchingCubes object used for generating the isosurface of the TPMS
-	*  @param massproperties vtkMassProperties object used to calculate area and volume of the TPMS
 	*/
 #ifdef USE_FLYING_EDGES
-	void SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface, vtkMassProperties* massproperties);
+	void SetVtkObjects(vtkImageData* volume, vtkFlyingEdges3D* surface);
 #else
-	void SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface, vtkMassProperties* massproperties);
+	void SetVtkObjects(vtkImageData* volume, vtkMarchingCubes* surface);
 #endif
 
 
