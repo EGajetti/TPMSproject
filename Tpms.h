@@ -12,6 +12,9 @@
 #include <vtkTransform.h>
 #include <vtkIntersectionPolyDataFilter.h>
 #include <vtkBooleanOperationPolyDataFilter.h>
+#include <vtkCubeSource.h>
+#include <vtkTriangleFilter.h>
+#include <vtkLinearSubdivisionFilter.h>
 
 
 #include "Definition.h"
@@ -80,14 +83,22 @@ public:
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	void TpmsWriteToSTL(const char* filename, vtkBooleanOperationPolyDataFilter* trasformaCubo);
-	// void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* cleaned);
+	void TpmsWriteToSTL(const char* filename, vtkAppendPolyData* appendTPMS);
 
 	/**
 	 * \brief Transform the geometry (i.e. rotating and translating)
 	*/
-	vtkNew<vtkTransformPolyDataFilter> TpmsTransform(vtkQuadricDecimation* decimateCubo);
+	vtkNew<vtkTransformPolyDataFilter> TpmsTransform();
 
+	/**
+	 * \brief Intersecting the TPMS with a cube LxLxL
+	*/
+	vtkNew<vtkBooleanOperationPolyDataFilter> TpmsIntersecting(float tarSize, double* origin);
+
+	/**
+	 * \brief Union with walls
+	*/
+	vtkNew<vtkAppendPolyData> TpmsAppend(float tarSize, double* origin, float thick1, float thick2);
 
 	/**
 	*  \brief Set the pointers to the vtk object of the class

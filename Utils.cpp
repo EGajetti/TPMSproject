@@ -67,7 +67,7 @@ double* convertOrigin(string origin) {
 #ifdef GRAPHICAL
 
 // void renderSurface(vtkFlyingEdges3D* surface, vtkQuadricDecimation* decimate) {
-void renderSurface(vtkFlyingEdges3D* surface, vtkBooleanOperationPolyDataFilter* decimate) {	
+void renderSurface(vtkFlyingEdges3D* surface, vtkAppendPolyData* appendTPMS) {	
 
 	vtkNew<vtkNamedColors> colors;
 
@@ -82,7 +82,7 @@ void renderSurface(vtkFlyingEdges3D* surface, vtkBooleanOperationPolyDataFilter*
 	interactor->SetRenderWindow(renderWindow);
 
 	vtkNew<vtkPolyDataMapper> mapper;
-	mapper->SetInputConnection(decimate->GetOutputPort());
+	mapper->SetInputConnection(appendTPMS->GetOutputPort());
 
 	mapper->ScalarVisibilityOff();
 

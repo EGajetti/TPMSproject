@@ -154,8 +154,8 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	return decimate;
 }
 
-// vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform(vtkStaticCleanPolyData* decimateCubo) {
-	vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform(vtkQuadricDecimation* decimateCubo) {
+	vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform() {
+	vtkNew<vtkQuadricDecimation> decimateCubo = TpmsQuadricDecimation();
 	vtkNew<vtkTransform> trasformazione;
 	trasformazione->Translate(-numCellX*scaleVtk/2.0, -numCellY*scaleVtk/2.0, -numCellZ*scaleVtk/2.0);
 	vtkNew<vtkTransformPolyDataFilter> trasformaCubo;
@@ -165,13 +165,77 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	return trasformaCubo;
 }
 
+vtkNew<vtkBooleanOperationPolyDataFilter> Tpms::TpmsIntersecting(float tarSize, double* origin){
+	vtkNew<vtkCubeSource> box;
+	box->SetXLength(tarSize + 0.1*tarSize);
+	box->SetYLength(tarSize + 0.1*tarSize);
+	box->SetZLength(tarSize + 0.1*tarSize);
+	box->SetCenter(origin);
+	box->Update();
 
-// void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {	
-	void Tpms::TpmsWriteToSTL(const char* filename, vtkBooleanOperationPolyDataFilter* trasformaCubo) {	
+	// convert the box in a triangular grid
+	vtkNew<vtkTriangleFilter> boxTriang;
+	boxTriang->SetInputData(box->GetOutput());
+	boxTriang->Update();
+
+	vtkNew<vtkLinearSubdivisionFilter> boxRefined;
+	boxRefined->SetInputData(boxTriang->GetOutput());
+	boxRefined->SetNumberOfSubdivisions(5);
+	boxRefined->Update();
+
+	vtkNew<vtkTransformPolyDataFilter> translateTPMS = TpmsTransform();
+    vtkNew<vtkBooleanOperationPolyDataFilter> intersectTPMS;
+    intersectTPMS->SetOperationToIntersection();
+    intersectTPMS->SetInputData(0, translateTPMS->GetOutput());
+    intersectTPMS->SetInputData(1, boxRefined->GetOutput());
+    intersectTPMS->Update();
+
+	return intersectTPMS;
+	}
+
+vtkNew<vtkAppendPolyData> Tpms::TpmsAppend(float tarSize, double* origin, float thick1, float thick2){
+	// Create two boxes (upper and lower walls)
+	double originCubo1[3];
+	for (int i = 0; i < 2; i++)
+		originCubo1[i] = origin[i];
+	originCubo1[2] = origin[2] + tarSize/2.0 + thick1/2.0;
+
+	vtkNew<vtkCubeSource> cubo1;
+	cubo1->SetXLength(tarSize + 0.1*tarSize);
+	cubo1->SetYLength(tarSize + 0.1*tarSize);
+	cubo1->SetZLength(thick1);
+	cubo1->SetCenter(originCubo1);
+	cubo1->Update();
+
+	double originCubo2[3];
+	for (int i = 0; i < 2; i++)
+		originCubo2[i] = origin[i];
+	originCubo2[2] = origin[2] - tarSize/2.0 - thick2/2.0;
+
+	vtkNew<vtkCubeSource> cubo2;
+	cubo2->SetXLength(tarSize + 0.1*tarSize);
+	cubo2->SetYLength(tarSize + 0.1*tarSize);
+	cubo2->SetZLength(thick2);
+	cubo2->SetCenter(originCubo2);
+	cubo2->Update();
+
+	// Create the TPMS
+	vtkNew<vtkBooleanOperationPolyDataFilter> intersectTPMS = TpmsIntersecting(tarSize, origin);
+
+	vtkNew<vtkAppendPolyData> appendTPMS;
+	appendTPMS->AddInputData(cubo1->GetOutput());
+	appendTPMS->AddInputData(cubo2->GetOutput());
+	appendTPMS->AddInputData(intersectTPMS->GetOutput());
+	appendTPMS->Update();
+
+	return appendTPMS;
+}
+
+
+void Tpms::TpmsWriteToSTL(const char* filename, vtkAppendPolyData* appendTPMS) {	
 
 	vtkNew<vtkSTLWriter> writer;
-	writer->SetInputData(trasformaCubo->GetOutput());
-	// writer->SetInputData(decimate->GetOutput());
+	writer->SetInputData(appendTPMS->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();
