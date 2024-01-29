@@ -40,7 +40,7 @@ public:
 	/// Standard constructor
 	Tpms();
 	/// Constructor with initialized itemList
-	Tpms(int npoints, float scalevtk, int numcellx, int numcelly, int numcellz, char typetpms, double origin[3], float rstart);
+	Tpms(int npoints, float scalevtk, int numcellx, int numcelly, int numcellz, char typetpms, double origin[3], float rvalue);
 	/// Destructor
 	~Tpms();
 
@@ -111,7 +111,7 @@ protected:
 	int numCellZ;
 	char typeTpms;
 	double isoValue;
-	float rStart;
+	float rValue;
 	double Origin[3] = { 0,0,0 };
 	vtkImageData* Volume;
 	vtkMassProperties* massProperties;

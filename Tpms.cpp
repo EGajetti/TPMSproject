@@ -20,18 +20,18 @@ Tpms::Tpms() {
 	numCellY = 1;
 	numCellZ = 1;
 	typeTpms = 'G';
-	rStart = -0.07;
+	rValue = -0.07;
 	isoValue = 0.;
 }
 
-Tpms::Tpms(int npoints, float scalevtk, int numcellx, int numcelly, int numcellz, char typetpms, double origin[3], float rstart) {
+Tpms::Tpms(int npoints, float scalevtk, int numcellx, int numcelly, int numcellz, char typetpms, double origin[3], float rvalue) {
 	nPoints = npoints;
 	scaleVtk = scalevtk;
 	numCellX = numcellx;
 	numCellY = numcelly;
 	numCellZ = numcellz;
 	typeTpms = typetpms;
-	rStart = rstart;
+	rValue = rvalue;
 	isoValue = 0.;
 	for (int i = 0; i < 3; i++)
 		Origin[i] = origin[i];
@@ -79,15 +79,21 @@ void Tpms::TpmsSet(string type) {
 	Volume->AllocateScalars(VTK_FLOAT, 1);
 
 	if (type == "solid"){
-		TpmsSolidGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rStart, Volume);
+		TpmsSolidGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rValue, Volume);
 
 	}
 	else if (type == "sheet"){
-		TpmsSheetGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rStart, Volume);
+		TpmsSheetGenerator(nPoints, numCellX, numCellY, numCellZ, typeTpms, rValue, Volume);
 	}
 	else{
 		cout << "Invalid TPMS type" << endl;
 	}
+
+	Surface->RemoveAllInputs();
+	Surface->SetInputData(Volume);
+	Surface->ComputeNormalsOn();
+	Surface->SetValue(0, isoValue);
+	Surface->Update();
 	
 }
 
@@ -119,6 +125,7 @@ double Tpms::TpmsArea() {
 	return stlArea;
 }
 
+
 vtkNew <vtkPolyDataNormals> Tpms::TpmsNormals() {
 	vtkNew<vtkPolyDataNormals> normals;
 	normals->SetInputConnection(Surface->GetOutputPort());
@@ -139,7 +146,7 @@ vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.9;
+	float reduction = 0.5;
   	decimate->SetInputData(cleaned->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();

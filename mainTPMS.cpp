@@ -57,10 +57,7 @@ int main(int argc, char* argv[])
 
 	double* origin = convertOrigin(var_value[7]);
 
-
-	// Calibration of volume fraction
-
-	float rstart = stof(var_value[8]);
+	float rvalue = stof(var_value[8]);
 
 	// Thickness of the walls
 	// Upper wall (+1.0 to have a thicker wall, then it will cut via blockMesh)
@@ -86,12 +83,13 @@ int main(int argc, char* argv[])
 
 	// Generation of the final TPMS lattice object
 
-	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rstart);
+	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rvalue);
 	tpms_final.SetVtkObjects(volume, surface, massProperties);
 	tpms_final.TpmsSet(type);
 
-	double stlVol = tpms_final.TpmsVolume();
-	double stlArea = tpms_final.TpmsArea();
+	// double stlVol = tpms_final.TpmsVolume();
+	// double stlArea = tpms_final.TpmsArea();
+	// tpms_final.TpmsComputeIso();
 
 	// Reduce the meshing to improve the grid quality
 	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
