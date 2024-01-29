@@ -2,7 +2,8 @@
 #include <vtkNew.h>
 #include <vtkMassProperties.h>
 #include <vtkQuadricDecimation.h>
-
+#include <vtkAppendPolyData.h>
+#include <vtkStaticCleanPolyData.h>
 
 #include "Definition.h"
 #include "Utils.h"
@@ -29,7 +30,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		var_value = readConfiguration("configuration.txt");
-		out_file = "myTPMS.stl";
+		out_file = (char*) "myTPMS.stl";
 	}
 
 	clock_t t0 = clock();
@@ -42,30 +43,35 @@ int main(int argc, char* argv[])
 	char TPMSname = var_value[1][0];
 	string type = var_value[2];
 
-	int numCellX = stoi(var_value[3]);
-	int numCellY = stoi(var_value[4]);
-	int numCellZ = stoi(var_value[5]);
+	// int numCellX = stoi(var_value[3]);
+	// int numCellY = stoi(var_value[4]);
+	// int numCellZ = stoi(var_value[5]);
 
-	float tarSize = stof(var_value[6]);
+	int numCellX = 2;
+	int numCellY = 2;
+	int numCellZ = 2;
 
-	double* origin = convertOrigin(var_value[7]);
+	float tarSize = stof(var_value[3]);
 
+	double* origin = convertOrigin(var_value[4]);
 
-	// Calibration of volume fraction
+	float rvalue = stof(var_value[5]);
 
-	float rstart = stof(var_value[8]);
-
+	// Thickness of the walls
+	// Upper wall (+1.0 to have a thicker wall, then it will cut via blockMesh)
+	float thick1 = stof(var_value[6]) + 1.0;
+	// Lower wall
+	float thick2 = stof(var_value[7]) + 1.0;
 
 	// Saving TPMS to stl file and display the TPMS
 
-	bool saveSTL = stoi(var_value[9]);
-	bool graph = stoi(var_value[10]);
+	bool saveSTL = stoi(var_value[8]);
+	bool graph = stoi(var_value[9]);
 
 
 	// Vtk objects
 
 	vtkNew<vtkImageData> volume;
-	vtkNew<vtkMassProperties> massProperties;
 #ifdef USE_FLYING_EDGES
 	vtkNew<vtkFlyingEdges3D> surface;
 #else
@@ -74,25 +80,17 @@ int main(int argc, char* argv[])
 
 	// Generation of the final TPMS lattice object
 
-	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rstart);
-	tpms_final.SetVtkObjects(volume, surface, massProperties);
+	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rvalue);
+	tpms_final.SetVtkObjects(volume, surface);
 	tpms_final.TpmsSet(type);
 
-	double stlVol = tpms_final.TpmsVolume();
-	double stlArea = tpms_final.TpmsArea();
-
-	vtkNew<vtkQuadricDecimation> decimate = tpms_final.TpmsQuadricDecimation();
-
-
-	double volFracFinal = stlVol / (tarSize * tarSize * tarSize);
-
-	cout << "Volume TPMS: " << volFracFinal << endl;
-
+	
+	vtkNew<vtkAppendPolyData> appendTPMS = tpms_final.TpmsAppend(tarSize, origin, thick1, thick2);
 
 	// Saving to .stl file
 
 	if (saveSTL) {
-		tpms_final.TpmsWriteToSTL(out_file,decimate);
+		tpms_final.TpmsWriteToSTL(out_file,appendTPMS);
 	}
 
 
@@ -106,7 +104,7 @@ int main(int argc, char* argv[])
 
 #ifdef GRAPHICAL
 	if (graph)
-		renderSurface(surface, decimate);
+		renderSurface(surface, appendTPMS);
 #endif // GRAPHICAL
 
 

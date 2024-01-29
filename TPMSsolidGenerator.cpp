@@ -6,28 +6,28 @@ using namespace std;
 
 // Implementation of the function defined in Utils.h
 
-void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume)
+void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rvalue, vtkImageData* volume)
 {
 	int dimx = npoints * numcellx + 1;
 	int dimy = npoints * numcelly + 1;
 	int dimz = npoints * numcellz + 1;
 	int dimension = max({dimx, dimy, dimz});
 
-	const float pi = 2 * 3.14159265358979323846 / npoints;
+	const float pi2 = 2 * 3.14159265358979323846 / npoints;
 	float scal = 0.;
 
 	float* cosv = new float[dimension];
 	for (int i = 0; i < dimension; i++)
-		cosv[i] = cos(pi * i);
+		cosv[i] = cos(pi2 * i);
 
 	float* senv = new float[dimension];
 	for (int i = 0; i < dimension; i++)
-		senv[i] = sin(pi * i);
+		senv[i] = sin(pi2 * i);
 
 	float* cosv_t = new float[dimension];
 	if ((type == 'I') || (type == 'S') || (type == 'F'))
 		for (int i = 0; i < dimension; i++)
-			cosv_t[i] = cos(2 * pi * i);
+			cosv_t[i] = cos(2 * pi2 * i);
 
 	int temp = 0;
 
@@ -39,7 +39,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = -(cosv[x] + cosv[y] + cosv[z]) - rstart;
+					scal = (cosv[x] + cosv[y] + cosv[z]) - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -52,7 +52,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = cosv[x] * senv[y] + cosv[y] * senv[z] + cosv[z] * senv[x] - rstart;
+					scal = cosv[x] * senv[y] + cosv[y] * senv[z] + cosv[z] * senv[x] - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -65,7 +65,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = senv[x] * senv[y] * senv[z] + senv[x] * cosv[y] * cosv[z] + cosv[x] * senv[y] * cosv[z] + cosv[x] * cosv[y] * senv[z] - rstart;
+					scal = senv[x] * senv[y] * senv[z] + senv[x] * cosv[y] * cosv[z] + cosv[x] * senv[y] * cosv[z] + cosv[x] * cosv[y] * senv[z] - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -78,7 +78,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = 2. * (cosv[x] * cosv[y] + cosv[y] * cosv[z] + cosv[z] * cosv[x]) - (cosv_t[x] + cosv_t[y] + cosv_t[z]) - rstart;
+					scal = 2. * (cosv[x] * cosv[y] + cosv[y] * cosv[z] + cosv[z] * cosv[x]) - (cosv_t[x] + cosv_t[y] + cosv_t[z]) - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -91,7 +91,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = cosv_t[x] * senv[y] * cosv[z] + cosv[x] * cosv_t[y] * senv[z] + senv[x] * cosv[y] * cosv_t[z] - rstart;
+					scal = cosv_t[x] * senv[y] * cosv[z] + cosv[x] * cosv_t[y] * senv[z] + senv[x] * cosv[y] * cosv_t[z] - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
@@ -104,7 +104,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = -(4. * (cosv[x] * cosv[y] * cosv[z]) - (cosv_t[x] * cosv_t[y] + cosv_t[y] * cosv_t[z] + cosv_t[z] * cosv_t[x])) - rstart;
+					scal = -(4. * (cosv[x] * cosv[y] * cosv[z]) - (cosv_t[x] * cosv_t[y] + cosv_t[y] * cosv_t[z] + cosv_t[z] * cosv_t[x])) - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
