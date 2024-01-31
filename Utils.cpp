@@ -66,7 +66,7 @@ double* convertOrigin(string origin) {
 
 #ifdef GRAPHICAL
 
-void renderSurface(vtkFlyingEdges3D* surface, vtkAppendPolyData* appendTPMS) {	
+void renderSurface(vtkStaticCleanPolyData* finalTPMS) {	
 
 	vtkNew<vtkNamedColors> colors;
 
@@ -81,7 +81,7 @@ void renderSurface(vtkFlyingEdges3D* surface, vtkAppendPolyData* appendTPMS) {
 	interactor->SetRenderWindow(renderWindow);
 
 	vtkNew<vtkPolyDataMapper> mapper;
-	mapper->SetInputConnection(appendTPMS->GetOutputPort());
+	mapper->SetInputConnection(finalTPMS->GetOutputPort());
 
 	mapper->ScalarVisibilityOff();
 

@@ -57,16 +57,10 @@ int main(int argc, char* argv[])
 
 	float rvalue = stof(var_value[5]);
 
-	// Thickness of the walls
-	// Upper wall (+1.0 to have a thicker wall, then it will cut via blockMesh)
-	float thick1 = stof(var_value[6]) + 1.0;
-	// Lower wall
-	float thick2 = stof(var_value[7]) + 1.0;
-
 	// Saving TPMS to stl file and display the TPMS
 
-	bool saveSTL = stoi(var_value[8]);
-	bool graph = stoi(var_value[9]);
+	bool saveSTL = stoi(var_value[6]);
+	bool graph = stoi(var_value[7]);
 
 
 	// Vtk objects
@@ -85,12 +79,12 @@ int main(int argc, char* argv[])
 	tpms_final.TpmsSet(type);
 
 	
-	vtkNew<vtkAppendPolyData> appendTPMS = tpms_final.TpmsAppend(tarSize, origin, thick1, thick2);
+	vtkNew<vtkStaticCleanPolyData> finalTPMS = tpms_final.TpmsIntersecting(tarSize, origin);
 
 	// Saving to .stl file
 
 	if (saveSTL) {
-		tpms_final.TpmsWriteToSTL(out_file,appendTPMS);
+		tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
 	}
 
 
@@ -104,7 +98,7 @@ int main(int argc, char* argv[])
 
 #ifdef GRAPHICAL
 	if (graph)
-		renderSurface(surface, appendTPMS);
+		renderSurface(finalTPMS);
 #endif // GRAPHICAL
 
 

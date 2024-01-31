@@ -26,9 +26,9 @@
 #include <vtkProperty.h>
 #include <vtkQuadricDecimation.h>
 #include <vtkStaticCleanPolyData.h>
-#include <vtkAppendPolyData.h>
-#include <vtkIntersectionPolyDataFilter.h>
+#include <vtkTransformPolyDataFilter.h>
 #include <vtkBooleanOperationPolyDataFilter.h>
+
 
 #endif // GRAPHICAL
 
@@ -95,7 +95,7 @@ void printTime(clock_t start, clock_t end);
 * @param surface	vtkFlyingEdges3D object which contains the isosurface
 */
 #ifdef GRAPHICAL
-void renderSurface(vtkFlyingEdges3D* surface, vtkAppendPolyData* appendTPMS);
+void renderSurface(vtkStaticCleanPolyData* finalTPMS);
 #endif // GRAPHICAL
 
 

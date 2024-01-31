@@ -77,7 +77,7 @@ public:
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	void TpmsWriteToSTL(const char* filename, vtkAppendPolyData* appendTPMS);
+	void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* finalTPMS);
 
 	/**
 	 * \brief Transform the geometry (i.e. rotating and translating)
@@ -87,12 +87,8 @@ public:
 	/**
 	 * \brief Intersecting the TPMS with a cube LxLxL
 	*/
-	vtkNew<vtkBooleanOperationPolyDataFilter> TpmsIntersecting(float tarSize, double* origin);
+	vtkNew<vtkStaticCleanPolyData> TpmsIntersecting(float tarSize, double* origin);
 
-	/**
-	 * \brief Union with walls
-	*/
-	vtkNew<vtkAppendPolyData> TpmsAppend(float tarSize, double* origin, float thick1, float thick2);
 
 	/**
 	*  \brief Set the pointers to the vtk object of the class

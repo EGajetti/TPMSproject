@@ -135,7 +135,7 @@ vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.5;
+	float reduction = 0.6;
   	decimate->SetInputData(cleaned->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
@@ -143,7 +143,7 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	return decimate;
 }
 
-	vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform() {
+vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform() {
 	vtkNew<vtkQuadricDecimation> decimateCubo = TpmsQuadricDecimation();
 	vtkNew<vtkTransform> trasformazione;
 	trasformazione->Translate(-numCellX*scaleVtk/2.0, -numCellY*scaleVtk/2.0, -numCellZ*scaleVtk/2.0);
@@ -154,11 +154,11 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	return trasformaCubo;
 }
 
-vtkNew<vtkBooleanOperationPolyDataFilter> Tpms::TpmsIntersecting(float tarSize, double* origin){
+vtkNew<vtkStaticCleanPolyData> Tpms::TpmsIntersecting(float tarSize, double* origin){
 	vtkNew<vtkCubeSource> box;
-	box->SetXLength(tarSize + 0.1*tarSize);
-	box->SetYLength(tarSize + 0.1*tarSize);
-	box->SetZLength(tarSize + 0.1*tarSize);
+	box->SetXLength(tarSize*1.1);
+	box->SetYLength(tarSize*1.1);
+	box->SetZLength(tarSize*1.1);
 	box->SetCenter(origin);
 	box->Update();
 
@@ -169,64 +169,32 @@ vtkNew<vtkBooleanOperationPolyDataFilter> Tpms::TpmsIntersecting(float tarSize, 
 
 	vtkNew<vtkLinearSubdivisionFilter> boxRefined;
 	boxRefined->SetInputData(boxTriang->GetOutput());
-	boxRefined->SetNumberOfSubdivisions(5);
+	boxRefined->SetNumberOfSubdivisions(4);
 	boxRefined->Update();
 
 	vtkNew<vtkTransformPolyDataFilter> translateTPMS = TpmsTransform();
     vtkNew<vtkBooleanOperationPolyDataFilter> intersectTPMS;
     intersectTPMS->SetOperationToIntersection();
-    intersectTPMS->SetInputData(0, translateTPMS->GetOutput());
-    intersectTPMS->SetInputData(1, boxRefined->GetOutput());
+	intersectTPMS->SetInputData(0, boxRefined->GetOutput());
+    intersectTPMS->SetInputData(1, translateTPMS->GetOutput());
     intersectTPMS->Update();
-
+	
+	vtkNew<vtkStaticCleanPolyData> finalTPMS;
+	finalTPMS->SetInputData(intersectTPMS->GetOutput());
+	finalTPMS->SetTolerance(5e-4);
+	finalTPMS->ConvertLinesToPointsOn();
+	finalTPMS->ConvertLinesToPointsOn();
+	finalTPMS->Update();
 	double porosity = TpmsVolume(intersectTPMS, tarSize);
-
-	return intersectTPMS;
+	return finalTPMS;
+	
 	}
 
-vtkNew<vtkAppendPolyData> Tpms::TpmsAppend(float tarSize, double* origin, float thick1, float thick2){
-	// Create two boxes (upper and lower walls)
-	double originCubo1[3];
-	for (int i = 0; i < 2; i++)
-		originCubo1[i] = origin[i];
-	originCubo1[2] = origin[2] + tarSize/2.0 + thick1/2.0;
 
-	vtkNew<vtkCubeSource> cubo1;
-	cubo1->SetXLength(tarSize + 0.1*tarSize);
-	cubo1->SetYLength(tarSize + 0.1*tarSize);
-	cubo1->SetZLength(thick1);
-	cubo1->SetCenter(originCubo1);
-	cubo1->Update();
-
-	double originCubo2[3];
-	for (int i = 0; i < 2; i++)
-		originCubo2[i] = origin[i];
-	originCubo2[2] = origin[2] - tarSize/2.0 - thick2/2.0;
-
-	vtkNew<vtkCubeSource> cubo2;
-	cubo2->SetXLength(tarSize + 0.1*tarSize);
-	cubo2->SetYLength(tarSize + 0.1*tarSize);
-	cubo2->SetZLength(thick2);
-	cubo2->SetCenter(originCubo2);
-	cubo2->Update();
-
-	// Create the TPMS
-	vtkNew<vtkBooleanOperationPolyDataFilter> intersectTPMS = TpmsIntersecting(tarSize, origin);
-
-	vtkNew<vtkAppendPolyData> appendTPMS;
-	appendTPMS->AddInputData(cubo1->GetOutput());
-	appendTPMS->AddInputData(cubo2->GetOutput());
-	appendTPMS->AddInputData(intersectTPMS->GetOutput());
-	appendTPMS->Update();
-
-	return appendTPMS;
-}
-
-
-void Tpms::TpmsWriteToSTL(const char* filename, vtkAppendPolyData* appendTPMS) {	
+void Tpms::TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* finalTPMS) {	
 
 	vtkNew<vtkSTLWriter> writer;
-	writer->SetInputData(appendTPMS->GetOutput());
+	writer->SetInputData(finalTPMS->GetOutput());
 	writer->SetFileName(filename);
 	writer->SetFileTypeToBinary();
 	writer->Update();
