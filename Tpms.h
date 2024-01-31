@@ -56,6 +56,11 @@ public:
 	*  \brief Get the TPMS volume
 	*/
 	double TpmsVolume(vtkBooleanOperationPolyDataFilter* intersectTPMS, float tarSize);
+	
+	/**
+	 * \brief Flip normals orientiation
+	*/
+	vtkNew<vtkPolyDataNormals> TpmsNormals();
 
 	/**
 	 * \brief Cleaning the mesh after isosurface
@@ -68,16 +73,11 @@ public:
 	vtkNew <vtkQuadricDecimation> TpmsQuadricDecimation();
 
 	/**
-	 * \brief Flip normals orientiation
+	 * \brief Create a box L x L x L
+	 * @param tarSize Target size of the sube length
+	 * @param origin The origin of the TPMS (centre)
 	*/
-	vtkNew<vtkPolyDataNormals> TpmsNormals();
-
-
-	/**
-	*  \brief Write the Tpms to the stl file
-	*  @param filename Output filename
-	*/
-	void TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* finalTPMS);
+	vtkNew<vtkLinearSubdivisionFilter> TpmsBox(float tarSize, double* origin);
 
 	/**
 	 * \brief Transform the geometry (i.e. rotating and translating)
@@ -85,9 +85,33 @@ public:
 	vtkNew<vtkTransformPolyDataFilter> TpmsTransform();
 
 	/**
-	 * \brief Intersecting the TPMS with a cube LxLxL
+	 * \brief Clean the geometry after intersection and difference
+	 * @param boolTPMS The boolean operation performed, i.e. intersection (solid domain) or difference (fluid domain) 
 	*/
-	vtkNew<vtkStaticCleanPolyData> TpmsIntersecting(float tarSize, double* origin);
+	vtkNew<vtkStaticCleanPolyData> TpmsCleanBoolOper(vtkBooleanOperationPolyDataFilter* boolTPMS);
+
+	/**
+	 * \brief Intersecting the TPMS with the cube L x L x L
+	 * @param translateTPMS TPMS with the center in origin
+	 * @param boxRefined The cube (refined and triangulized)
+	 * @param tarSize the desired size of the cube
+	*/
+	vtkNew<vtkStaticCleanPolyData> TpmsSolid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
+	
+	/**
+	 * \brief Subtracting the TPMS from a cube L x L x L
+	 * @param translateTPMS TPMS with the center in origin
+	 * @param boxRefined The cube (refined and triangulized)
+	 * @param tarSize the desired size of the cube
+	*/
+	vtkNew<vtkStaticCleanPolyData> TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
+
+
+	/**
+	*  \brief Write the Tpms to the stl file
+	*  @param filename Output filename
+	*/
+	void TpmsWriteToSTL(const string filename, vtkStaticCleanPolyData* finalTPMS);
 
 
 	/**

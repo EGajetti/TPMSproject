@@ -22,15 +22,15 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	string* var_value;
-	char* out_file;
+	string out_file;
 
 	if (argc == 3) {
 		var_value = readConfiguration(argv[1]);
-		out_file = argv[2];
+		out_file = (string) argv[2];
 	}
 	else {
 		var_value = readConfiguration("configuration.txt");
-		out_file = (char*) "myTPMS.stl";
+		out_file = "myTPMS.stl";
 	}
 
 	clock_t t0 = clock();
@@ -79,12 +79,21 @@ int main(int argc, char* argv[])
 	tpms_final.TpmsSet(type);
 
 	
-	vtkNew<vtkStaticCleanPolyData> finalTPMS = tpms_final.TpmsIntersecting(tarSize, origin);
+	vtkNew<vtkTransformPolyDataFilter> finalTPMS = tpms_final.TpmsTransform();
+
+	vtkNew<vtkLinearSubdivisionFilter> boxRefined = tpms_final.TpmsBox(tarSize, origin);
+
+	vtkNew<vtkStaticCleanPolyData> solidTPMS = tpms_final.TpmsSolid(finalTPMS, boxRefined, tarSize);
+	vtkNew<vtkStaticCleanPolyData> fluidTPMS = tpms_final.TpmsFluid(finalTPMS, boxRefined, tarSize);
 
 	// Saving to .stl file
 
 	if (saveSTL) {
-		tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
+		string solidName = out_file + "_solid.stl";
+		string fluidName = out_file + "_fluid.stl";
+
+		tpms_final.TpmsWriteToSTL(solidName,solidTPMS);
+		tpms_final.TpmsWriteToSTL(fluidName,fluidTPMS);
 	}
 
 
@@ -98,7 +107,7 @@ int main(int argc, char* argv[])
 
 #ifdef GRAPHICAL
 	if (graph)
-		renderSurface(finalTPMS);
+		renderSurface(solidTPMS);
 #endif // GRAPHICAL
 
 

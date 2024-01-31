@@ -16,9 +16,9 @@ using namespace std;
 Tpms::Tpms() {
 	nPoints = 100;
 	scaleVtk = 1;
-	numCellX = 1;
-	numCellY = 1;
-	numCellZ = 1;
+	numCellX = 2;
+	numCellY = 2;
+	numCellZ = 2;
 	typeTpms = 'G';
 	rValue = -0.07;
 	isoValue = 0.;
@@ -96,6 +96,7 @@ void Tpms::TpmsSet(string type) {
 }
 
 
+
 double Tpms::TpmsVolume(vtkBooleanOperationPolyDataFilter* intersectTPMS, float tarSize) {
 
 	vtkNew<vtkMassProperties> massProperties;
@@ -112,7 +113,6 @@ double Tpms::TpmsVolume(vtkBooleanOperationPolyDataFilter* intersectTPMS, float 
 	cout << "Fluid porosity: " << porosity << endl;
 	return porosity;
 }
-
 
 
 vtkNew <vtkPolyDataNormals> Tpms::TpmsNormals() {
@@ -143,18 +143,7 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	return decimate;
 }
 
-vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform() {
-	vtkNew<vtkQuadricDecimation> decimateCubo = TpmsQuadricDecimation();
-	vtkNew<vtkTransform> trasformazione;
-	trasformazione->Translate(-numCellX*scaleVtk/2.0, -numCellY*scaleVtk/2.0, -numCellZ*scaleVtk/2.0);
-	vtkNew<vtkTransformPolyDataFilter> trasformaCubo;
-	trasformaCubo->SetTransform(trasformazione);
-	trasformaCubo->SetInputData(decimateCubo->GetOutput());
-	trasformaCubo->Update();
-	return trasformaCubo;
-}
-
-vtkNew<vtkStaticCleanPolyData> Tpms::TpmsIntersecting(float tarSize, double* origin){
+vtkNew<vtkLinearSubdivisionFilter> Tpms::TpmsBox(float tarSize, double* origin){
 	vtkNew<vtkCubeSource> box;
 	box->SetXLength(tarSize*1.1);
 	box->SetYLength(tarSize*1.1);
@@ -172,30 +161,59 @@ vtkNew<vtkStaticCleanPolyData> Tpms::TpmsIntersecting(float tarSize, double* ori
 	boxRefined->SetNumberOfSubdivisions(4);
 	boxRefined->Update();
 
-	vtkNew<vtkTransformPolyDataFilter> translateTPMS = TpmsTransform();
+	return boxRefined;
+}
+
+vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform() {
+	vtkNew<vtkQuadricDecimation> decimateCubo = TpmsQuadricDecimation();
+	vtkNew<vtkTransform> trasformazione;
+	trasformazione->Translate(-numCellX*scaleVtk/2.0, -numCellY*scaleVtk/2.0, -numCellZ*scaleVtk/2.0);
+	vtkNew<vtkTransformPolyDataFilter> trasformaCubo;
+	trasformaCubo->SetTransform(trasformazione);
+	trasformaCubo->SetInputData(decimateCubo->GetOutput());
+	trasformaCubo->Update();
+	return trasformaCubo;
+}
+
+vtkNew<vtkStaticCleanPolyData> Tpms::TpmsCleanBoolOper(vtkBooleanOperationPolyDataFilter* boolTPMS){
+	vtkNew<vtkStaticCleanPolyData> finalTPMS;
+	finalTPMS->SetInputData(boolTPMS->GetOutput());
+	finalTPMS->SetTolerance(5e-4);
+	finalTPMS->ConvertLinesToPointsOn();
+	finalTPMS->ConvertLinesToPointsOn();
+	finalTPMS->Update();
+	return finalTPMS;
+}
+
+vtkNew<vtkStaticCleanPolyData> Tpms::TpmsSolid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize){
     vtkNew<vtkBooleanOperationPolyDataFilter> intersectTPMS;
     intersectTPMS->SetOperationToIntersection();
 	intersectTPMS->SetInputData(0, boxRefined->GetOutput());
     intersectTPMS->SetInputData(1, translateTPMS->GetOutput());
     intersectTPMS->Update();
-	
-	vtkNew<vtkStaticCleanPolyData> finalTPMS;
-	finalTPMS->SetInputData(intersectTPMS->GetOutput());
-	finalTPMS->SetTolerance(5e-4);
-	finalTPMS->ConvertLinesToPointsOn();
-	finalTPMS->ConvertLinesToPointsOn();
-	finalTPMS->Update();
 	double porosity = TpmsVolume(intersectTPMS, tarSize);
-	return finalTPMS;
-	
+
+	vtkNew<vtkStaticCleanPolyData> solidTPMS = TpmsCleanBoolOper(intersectTPMS);
+	return solidTPMS;
 	}
 
+vtkNew<vtkStaticCleanPolyData> Tpms::TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize){
+    vtkNew<vtkBooleanOperationPolyDataFilter> subtractTPMS;
+    subtractTPMS->SetOperationToDifference();
+	subtractTPMS->SetInputData(0, boxRefined->GetOutput());
+    subtractTPMS->SetInputData(1, translateTPMS->GetOutput());
+    subtractTPMS->Update();
 
-void Tpms::TpmsWriteToSTL(const char* filename, vtkStaticCleanPolyData* finalTPMS) {	
+	vtkNew<vtkStaticCleanPolyData> fluidTPMS = TpmsCleanBoolOper(subtractTPMS);
+	return fluidTPMS;
+	}	
+
+
+void Tpms::TpmsWriteToSTL(const string filename, vtkStaticCleanPolyData* finalTPMS) {	
 
 	vtkNew<vtkSTLWriter> writer;
 	writer->SetInputData(finalTPMS->GetOutput());
-	writer->SetFileName(filename);
+	writer->SetFileName(filename.c_str());
 	writer->SetFileTypeToBinary();
 	writer->Update();
 }

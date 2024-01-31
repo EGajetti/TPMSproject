@@ -16,7 +16,7 @@ Target size = 10
 Center = [0,0,0]
 
 # Level set constant c
-C value = -0.31
+C value = 0.61
 
 # Save final TPMS to .stl file: yes = 1, no = 0
 Save to STL = 1
