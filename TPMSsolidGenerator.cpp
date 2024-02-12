@@ -6,11 +6,14 @@ using namespace std;
 
 // Implementation of the function defined in Utils.h
 
-void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rvalue, vtkImageData* volume)
+void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rvalue, vtkImageData* volume, const float scaleVtk)
 {
-	int dimx = npoints * numcellx + 1;
-	int dimy = npoints * numcelly + 1;
-	int dimz = npoints * numcellz + 1;
+	// int dimx = npoints * numcellx + 2*(int)scaleVtk + 1;
+	// int dimy = npoints * numcelly + 2*(int)scaleVtk + 1;
+	// int dimz = npoints * numcellz + 2*(int)scaleVtk + 1;
+	int dimx = npoints * numcellx + 2;
+	int dimy = npoints * numcelly + 2;
+	int dimz = npoints * numcellz + 2;
 	int dimension = max({dimx, dimy, dimz});
 
 	const float pi2 = 2 * 3.14159265358979323846 / npoints;

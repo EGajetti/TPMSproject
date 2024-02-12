@@ -66,7 +66,7 @@ double* convertOrigin(string origin) {
 
 #ifdef GRAPHICAL
 
-void renderSurface(vtkStaticCleanPolyData* finalTPMS) {	
+void renderSurface(vtkTransformPolyDataFilter* finalTPMS) {	
 
 	vtkNew<vtkNamedColors> colors;
 

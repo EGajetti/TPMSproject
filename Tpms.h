@@ -15,7 +15,6 @@
 #include <vtkTriangleFilter.h>
 #include <vtkLinearSubdivisionFilter.h>
 
-
 #include "Definition.h"
 #include "Utils.h"
 
@@ -104,14 +103,16 @@ public:
 	 * @param boxRefined The cube (refined and triangulized)
 	 * @param tarSize the desired size of the cube
 	*/
-	vtkNew<vtkStaticCleanPolyData> TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
-
+	vtkNew<vtkQuadricDecimation> TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
 
 	/**
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
+	void TpmsWriteToSTL(const string filename, vtkTransformPolyDataFilter* finalTPMS);
 	void TpmsWriteToSTL(const string filename, vtkStaticCleanPolyData* finalTPMS);
+	void TpmsWriteToSTL(const string filename, vtkQuadricDecimation* finalTPMS);
+
 
 
 	/**

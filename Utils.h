@@ -47,7 +47,7 @@ using namespace std;
 * @param rstart     Start parameter
 * @param volume	    VTKImageData
 */
-void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume);
+void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume, const float scaleVtk);
 
 /**
 * \brief Functions for setting scalar values in a VTKImageDATA given a function:
@@ -60,7 +60,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 * @param rstart     Start parameter
 * @param volume	    VTKImageData
 */
-void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume);
+void TpmsSheetGenerator(const int npoints, const int numcellx, const int numcelly, const int numcellz, char type, const float rstart, vtkImageData* volume, const float scaleVtk);
 
 
 
@@ -95,7 +95,7 @@ void printTime(clock_t start, clock_t end);
 * @param surface	vtkFlyingEdges3D object which contains the isosurface
 */
 #ifdef GRAPHICAL
-void renderSurface(vtkStaticCleanPolyData* finalTPMS);
+void renderSurface(vtkTransformPolyDataFilter* finalTPMS);
 #endif // GRAPHICAL
 
 
