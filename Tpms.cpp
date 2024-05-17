@@ -62,10 +62,10 @@ void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
 	// Better to have a sligthly larger extent, so to cut coarse edges a posteriori
-	// int extent[6] = { -2*(int)scaleVtk - 1, nPoints * numCellX + 2*(int)scaleVtk + 1, 
-	// 				  -2*(int)scaleVtk - 1, nPoints * numCellY + 2*(int)scaleVtk + 1,
-	// 				  -2*(int)scaleVtk - 1, nPoints * numCellZ + 2*(int)scaleVtk + 1};
-	int extent[6] = { -10, nPoints * numCellX + 2, -10, nPoints * numCellY + 2, -10, nPoints * numCellZ + 2};
+	int extent[6] = { -2*(int)scaleVtk - 10, nPoints * numCellX + 2*(int)scaleVtk + 10, 
+					  -2*(int)scaleVtk - 10, nPoints * numCellY + 2*(int)scaleVtk + 10,
+					  -2*(int)scaleVtk - 10, nPoints * numCellZ + 2*(int)scaleVtk + 10};
+	// int extent[6] = { -10, nPoints * numCellX + 2, -10, nPoints * numCellY + 2, -10, nPoints * numCellZ + 2};
 	// int extent[6] = { 0, nPoints * numCellX -1, 0, nPoints * numCellY -1, 0, nPoints * numCellZ - 1};
 
 	Volume->SetExtent(extent);
@@ -100,7 +100,7 @@ void Tpms::TpmsSet(string type) {
 
 
 
-double Tpms::TpmsVolume(vtkBooleanOperationPolyDataFilter* intersectTPMS, float tarSize) {
+double Tpms::TpmsVolume(vtkPolyDataBooleanFilter* intersectTPMS, float tarSize) {
 
 	vtkNew<vtkMassProperties> massProperties;
 
@@ -138,7 +138,7 @@ vtkNew <vtkStaticCleanPolyData> Tpms::TpmsClean() {
 vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	vtkNew <vtkStaticCleanPolyData> cleaned = TpmsClean();
 	vtkNew<vtkQuadricDecimation> decimate;
-	float reduction = 0.6;
+	float reduction = 0.5;
   	decimate->SetInputData(cleaned->GetOutput());
   	decimate->SetTargetReduction(reduction);
   	decimate->VolumePreservationOn();
@@ -148,9 +148,9 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 
 vtkNew<vtkLinearSubdivisionFilter> Tpms::TpmsBox(float tarSize, double* origin){
 	vtkNew<vtkCubeSource> box;
-	box->SetXLength(tarSize*1.01);
-	box->SetYLength(tarSize*1.01);
-	box->SetZLength(tarSize*1.01);
+	box->SetXLength(tarSize*1.0);
+	box->SetYLength(tarSize*1.0);
+	box->SetZLength(tarSize*1.0);
 	box->SetCenter(origin);
 	box->Update();
 
@@ -161,7 +161,7 @@ vtkNew<vtkLinearSubdivisionFilter> Tpms::TpmsBox(float tarSize, double* origin){
 
 	vtkNew<vtkLinearSubdivisionFilter> boxRefined;
 	boxRefined->SetInputData(boxTriang->GetOutput());
-	boxRefined->SetNumberOfSubdivisions(5);
+	boxRefined->SetNumberOfSubdivisions(6);
 	boxRefined->Update();
 
 	return boxRefined;
@@ -178,48 +178,43 @@ vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform() {
 	return trasformaCubo;
 }
 
-vtkNew<vtkStaticCleanPolyData> Tpms::TpmsCleanBoolOper(vtkBooleanOperationPolyDataFilter* boolTPMS){
+vtkNew<vtkPolyDataNormals> Tpms::TpmsCleanBoolOper(vtkPolyDataBooleanFilter* boolTPMS){
 	vtkNew<vtkStaticCleanPolyData> finalTPMS;
 	finalTPMS->SetInputData(boolTPMS->GetOutput());
 	finalTPMS->SetTolerance(5e-4);
 	finalTPMS->ConvertLinesToPointsOn();
 	finalTPMS->ConvertLinesToPointsOn();
 	finalTPMS->Update();
-	return finalTPMS;
+	vtkNew<vtkPolyDataNormals> normalTPMS;
+	normalTPMS->SetInputData(finalTPMS->GetOutput());
+	normalTPMS->ConsistencyOn();
+	normalTPMS->ComputeCellNormalsOn();
+	normalTPMS->Update();
+	return normalTPMS;
 }
 
-vtkNew<vtkStaticCleanPolyData> Tpms::TpmsSolid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize){
-    vtkNew<vtkBooleanOperationPolyDataFilter> intersectTPMS;
-    intersectTPMS->SetOperationToIntersection();
+vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsSolid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize){
+    vtkNew<vtkPolyDataBooleanFilter> intersectTPMS;
+    intersectTPMS->SetOperModeToIntersection();
 	intersectTPMS->SetInputData(0, boxRefined->GetOutput());
     intersectTPMS->SetInputData(1, translateTPMS->GetOutput());
     intersectTPMS->Update();
 	double porosity = TpmsVolume(intersectTPMS, tarSize);
 
-	vtkNew<vtkStaticCleanPolyData> solidTPMS = TpmsCleanBoolOper(intersectTPMS);
-	return solidTPMS;
+	return intersectTPMS;
 	}
 
-vtkNew<vtkQuadricDecimation> Tpms::TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize){
-    vtkNew<vtkBooleanOperationPolyDataFilter> subtractTPMS;
-    subtractTPMS->SetOperationToDifference();
+vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize){
+    vtkNew<vtkPolyDataBooleanFilter> subtractTPMS;
+    subtractTPMS->SetOperModeToDifference();
 	subtractTPMS->SetInputData(0, boxRefined->GetOutput());
     subtractTPMS->SetInputData(1, translateTPMS->GetOutput());
     subtractTPMS->Update();
-
-	vtkNew<vtkStaticCleanPolyData> fluidTPMS = TpmsCleanBoolOper(subtractTPMS);
-	vtkNew <vtkQuadricDecimation> fluidTPMS_red;
-	float reduction = 0.2;
-  	fluidTPMS_red->SetInputData(fluidTPMS->GetOutput());
-  	fluidTPMS_red->SetTargetReduction(reduction);
-  	fluidTPMS_red->VolumePreservationOn();
-  	fluidTPMS_red->Update();
 	
-	return fluidTPMS_red;
-	}	
+	return subtractTPMS;
+}	
 
-
-void Tpms::TpmsWriteToSTL(const string filename, vtkTransformPolyDataFilter* finalTPMS) {	
+void Tpms::TpmsWriteToSTL(const string filename, vtkPolyDataBooleanFilter* finalTPMS) {	
 
 	vtkNew<vtkSTLWriter> writer;
 	writer->SetInputData(finalTPMS->GetOutput());
@@ -227,25 +222,6 @@ void Tpms::TpmsWriteToSTL(const string filename, vtkTransformPolyDataFilter* fin
 	writer->SetFileTypeToBinary();
 	writer->Update();
 }
-
-// void Tpms::TpmsWriteToSTL(const string filename, vtkQuadricDecimation* finalTPMS) {	
-
-// 	vtkNew<vtkSTLWriter> writer;
-// 	writer->SetInputData(finalTPMS->GetOutput());
-// 	writer->SetFileName(filename.c_str());
-// 	writer->SetFileTypeToBinary();
-// 	writer->Update();
-// }
-
-
-// void Tpms::TpmsWriteToSTL(const string filename, vtkStaticCleanPolyData* finalTPMS) {	
-
-// 	vtkNew<vtkSTLWriter> writer;
-// 	writer->SetInputData(finalTPMS->GetOutput());
-// 	writer->SetFileName(filename.c_str());
-// 	writer->SetFileTypeToBinary();
-// 	writer->Update();
-// }
 
 
 

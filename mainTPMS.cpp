@@ -4,8 +4,9 @@
 #include <vtkQuadricDecimation.h>
 #include <vtkAppendPolyData.h>
 #include <vtkStaticCleanPolyData.h>
-#include <vtkIntersectionPolyDataFilter.h>
 #include <vtkSTLWriter.h>
+#include <vtkPolyDataBooleanFilter.h>
+
 
 #include "Definition.h"
 #include "Utils.h"
@@ -49,9 +50,9 @@ int main(int argc, char* argv[])
 	// int numCellY = stoi(var_value[4]);
 	// int numCellZ = stoi(var_value[5]);
 
-	int numCellX = 1;
-	int numCellY = 1;
-	int numCellZ = 1;
+	int numCellX = 2;
+	int numCellY = 2;
+	int numCellZ = 2;
 
 	float tarSize = stof(var_value[3]);
 
@@ -83,22 +84,22 @@ int main(int argc, char* argv[])
 	
 	vtkNew<vtkTransformPolyDataFilter> finalTPMS = tpms_final.TpmsTransform();
 
-	// vtkNew<vtkLinearSubdivisionFilter> boxRefined = tpms_final.TpmsBox(tarSize, origin);
+	vtkNew<vtkLinearSubdivisionFilter> boxRefined = tpms_final.TpmsBox(tarSize, origin);
 
+	vtkNew<vtkPolyDataBooleanFilter> fluidTPMS = tpms_final.TpmsFluid(finalTPMS, boxRefined, tarSize);
+	vtkNew<vtkPolyDataBooleanFilter> solidTPMS = tpms_final.TpmsSolid(finalTPMS, boxRefined, tarSize);
 
-
-	// vtkNew<vtkStaticCleanPolyData> fluidTPMS = tpms_final.TpmsFluid(finalTPMS, boxRefined, tarSize);
 
 	// Saving to .stl file
 
 	if (saveSTL) {
-		// string solidName = out_file + "_solid.stl";
-		// string fluidName = out_file + "_fluid.stl";
+		string solidName = out_file + "_solid.stl";
+		string fluidName = out_file + "_fluid.stl";
 
-		// tpms_final.TpmsWriteToSTL(solidName,solidTPMS);
-		// tpms_final.TpmsWriteToSTL(fluidName,fluidTPMS);
+		tpms_final.TpmsWriteToSTL(solidName,solidTPMS);
+		tpms_final.TpmsWriteToSTL(fluidName,fluidTPMS);
 
-		tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
+		// tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
 	}
 
 

@@ -10,7 +10,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
-#include <vtkBooleanOperationPolyDataFilter.h>
+#include <vtkPolyDataBooleanFilter.h>
 #include <vtkCubeSource.h>
 #include <vtkTriangleFilter.h>
 #include <vtkLinearSubdivisionFilter.h>
@@ -54,7 +54,7 @@ public:
 	/**
 	*  \brief Get the TPMS volume
 	*/
-	double TpmsVolume(vtkBooleanOperationPolyDataFilter* intersectTPMS, float tarSize);
+	double TpmsVolume(vtkPolyDataBooleanFilter* intersectTPMS, float tarSize);
 	
 	/**
 	 * \brief Flip normals orientiation
@@ -87,7 +87,7 @@ public:
 	 * \brief Clean the geometry after intersection and difference
 	 * @param boolTPMS The boolean operation performed, i.e. intersection (solid domain) or difference (fluid domain) 
 	*/
-	vtkNew<vtkStaticCleanPolyData> TpmsCleanBoolOper(vtkBooleanOperationPolyDataFilter* boolTPMS);
+	vtkNew<vtkPolyDataNormals> TpmsCleanBoolOper(vtkPolyDataBooleanFilter* boolTPMS);
 
 	/**
 	 * \brief Intersecting the TPMS with the cube L x L x L
@@ -95,7 +95,7 @@ public:
 	 * @param boxRefined The cube (refined and triangulized)
 	 * @param tarSize the desired size of the cube
 	*/
-	vtkNew<vtkStaticCleanPolyData> TpmsSolid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
+	vtkNew<vtkPolyDataBooleanFilter> TpmsSolid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
 	
 	/**
 	 * \brief Subtracting the TPMS from a cube L x L x L
@@ -103,15 +103,15 @@ public:
 	 * @param boxRefined The cube (refined and triangulized)
 	 * @param tarSize the desired size of the cube
 	*/
-	vtkNew<vtkQuadricDecimation> TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
+	vtkNew<vtkPolyDataBooleanFilter> TpmsFluid(vtkTransformPolyDataFilter* translateTPMS, vtkLinearSubdivisionFilter* boxRefined, float tarSize);
 
 	/**
 	*  \brief Write the Tpms to the stl file
 	*  @param filename Output filename
 	*/
-	void TpmsWriteToSTL(const string filename, vtkTransformPolyDataFilter* finalTPMS);
-	void TpmsWriteToSTL(const string filename, vtkStaticCleanPolyData* finalTPMS);
-	void TpmsWriteToSTL(const string filename, vtkQuadricDecimation* finalTPMS);
+	// void TpmsWriteToSTL(const string filename, vtkTransformPolyDataFilter* finalTPMS);
+	void TpmsWriteToSTL(const string filename, vtkPolyDataBooleanFilter* finalTPMS);
+	// void TpmsWriteToSTL(const string filename, vtkQuadricDecimation* finalTPMS);
 
 
 
