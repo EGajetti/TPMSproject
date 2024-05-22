@@ -40,10 +40,11 @@ int main(int argc, char* argv[])
 
 	// Input
 
-	int nFinal = stoi(var_value[0]);
+	// int nFinal = stoi(var_value[0]);
+	int nFinal = 150;
 
-	char TPMSname = var_value[1][0];
-	string type = var_value[2];
+	char TPMSname = var_value[0][0];
+	string type = var_value[1];
 
 	// int numCellX = stoi(var_value[3]);
 	// int numCellY = stoi(var_value[4]);
@@ -53,17 +54,12 @@ int main(int argc, char* argv[])
 	int numCellY = 1;
 	int numCellZ = 1;
 
-	float tarSize = stof(var_value[3]);
+	float tarSize = stof(var_value[2]);
 
-	double* origin = convertOrigin(var_value[4]);
-
-	float rvalue = stof(var_value[5]);
-
-	// Saving TPMS to stl file and display the TPMS
-
-	bool saveSTL = stoi(var_value[6]);
-	bool graph = stoi(var_value[7]);
-
+	// double* origin = convertOrigin(var_value[3]);
+	double trasla = (tarSize + 1.0)/nFinal;
+	double origin[3] = {-numCellX*tarSize/2.0 - trasla, -numCellY*tarSize/2.0 - trasla, -numCellZ*tarSize/2.0 - trasla};
+	float rvalue = stof(var_value[3]);
 
 	// Vtk objects
 
@@ -81,40 +77,21 @@ int main(int argc, char* argv[])
 	tpms_final.TpmsSet(type);
 
 	
-	vtkNew<vtkTransformPolyDataFilter> finalTPMS = tpms_final.TpmsTransform();
+	// vtkNew<vtkTransformPolyDataFilter> finalTPMS = tpms_final.TpmsTransform();
+	vtkNew<vtkQuadricDecimation> finalTPMS = tpms_final.TpmsQuadricDecimation();
 
 	// vtkNew<vtkLinearSubdivisionFilter> boxRefined = tpms_final.TpmsBox(tarSize, origin);
-
-
-
 	// vtkNew<vtkStaticCleanPolyData> fluidTPMS = tpms_final.TpmsFluid(finalTPMS, boxRefined, tarSize);
 
 	// Saving to .stl file
+	tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
 
-	if (saveSTL) {
-		// string solidName = out_file + "_solid.stl";
-		// string fluidName = out_file + "_fluid.stl";
-
-		// tpms_final.TpmsWriteToSTL(solidName,solidTPMS);
-		// tpms_final.TpmsWriteToSTL(fluidName,fluidTPMS);
-
-		tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
-	}
 
 
 	// Printing execution time
 
 	clock_t t1 = clock();
 	printTime(t0, t1);
-
-
-	// Graphic
-
-#ifdef GRAPHICAL
-	if (graph)
-		// renderSurface(solidTPMS);
-		renderSurface(finalTPMS);
-#endif // GRAPHICAL
 
 
 	return EXIT_SUCCESS;
