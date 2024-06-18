@@ -4,11 +4,11 @@
 TPMSType = D
 
 # TPMS type: solid, sheet 
-Type = sheet
+Type = solid
 
 # Target size of the lattice
-Target size = 5
+Target size = 10
 
 # Level set constant c
-C value = 0.4
+C value = 0.3
 

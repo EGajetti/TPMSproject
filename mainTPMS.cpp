@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	// Input
 
 	// int nFinal = stoi(var_value[0]);
-	int nFinal = 150;
+	int nFinal = 130;
 
 	char TPMSname = var_value[0][0];
 	string type = var_value[1];
@@ -50,15 +50,17 @@ int main(int argc, char* argv[])
 	// int numCellY = stoi(var_value[4]);
 	// int numCellZ = stoi(var_value[5]);
 
-	int numCellX = 1;
-	int numCellY = 1;
-	int numCellZ = 1;
+	int numCellX = 2;
+	int numCellY = 2;
+	int numCellZ = 2;
 
 	float tarSize = stof(var_value[2]);
 
 	// double* origin = convertOrigin(var_value[3]);
 	double trasla = (tarSize + 1.0)/nFinal;
-	double origin[3] = {-numCellX*tarSize/2.0 - trasla, -numCellY*tarSize/2.0 - trasla, -numCellZ*tarSize/2.0 - trasla};
+	// double origin[3] = {-numCellX*tarSize/2.0 - trasla, -numCellY*tarSize/2.0 - trasla, -numCellZ*tarSize/2.0 - trasla};
+	double origin[3] = {-numCellX*tarSize/2.0, -numCellY*tarSize/2.0, -numCellZ*tarSize/2.0};
+
 	float rvalue = stof(var_value[3]);
 
 	// Vtk objects

@@ -62,10 +62,10 @@ void Tpms::TpmsSet(string type) {
 
 	Volume->ReleaseData();
 	// Better to have a sligthly larger extent, so to cut coarse edges a posteriori
-	int extent[6] = { -2*(int)scaleVtk - 1, nPoints * numCellX + 2*(int)scaleVtk + 1, 
-					  -2*(int)scaleVtk - 1, nPoints * numCellY + 2*(int)scaleVtk + 1,
-					  -2*(int)scaleVtk - 1, nPoints * numCellZ + 2*(int)scaleVtk + 1};
-	// int extent[6] = { -2, nPoints * numCellX + 2, -2, nPoints * numCellY + 2, -2, nPoints * numCellZ + 2};
+	// int extent[6] = { -2*(int)scaleVtk - 1, nPoints * numCellX + 2*(int)scaleVtk + 1, 
+	// 				  -2*(int)scaleVtk - 1, nPoints * numCellY + 2*(int)scaleVtk + 1,
+	// 				  -2*(int)scaleVtk - 1, nPoints * numCellZ + 2*(int)scaleVtk + 1};
+	int extent[6] = { -1, nPoints * numCellX + 1, -1, nPoints * numCellY + 1, -1, nPoints * numCellZ + 1};
 	// int extent[6] = { 0, nPoints * numCellX -1, 0, nPoints * numCellY -1, 0, nPoints * numCellZ - 1};
 
 	Volume->SetExtent(extent);
