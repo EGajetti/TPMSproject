@@ -65,7 +65,7 @@ void Tpms::TpmsSet(string type) {
 	// int extent[6] = { -2*(int)scaleVtk - 1, nPoints * numCellX + 2*(int)scaleVtk + 1, 
 	// 				  -2*(int)scaleVtk - 1, nPoints * numCellY + 2*(int)scaleVtk + 1,
 	// 				  -2*(int)scaleVtk - 1, nPoints * numCellZ + 2*(int)scaleVtk + 1};
-	int extent[6] = { -1, nPoints * numCellX + 1, -1, nPoints * numCellY + 1, -1, nPoints * numCellZ + 1};
+	int extent[6] = { -50, nPoints * numCellX + 50, -50, nPoints * numCellY + 50, -50, nPoints * numCellZ + 50};
 	// int extent[6] = { 0, nPoints * numCellX -1, 0, nPoints * numCellY -1, 0, nPoints * numCellZ - 1};
 
 	Volume->SetExtent(extent);
@@ -200,7 +200,6 @@ void Tpms::TpmsWriteToSTL(const string filename, vtkQuadricDecimation* finalTPMS
 	writer->SetFileTypeToBinary();
 	writer->Update();
 }
-
 
 
 

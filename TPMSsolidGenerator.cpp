@@ -11,9 +11,9 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 	// int dimx = npoints * numcellx + 2*(int)scaleVtk + 1;
 	// int dimy = npoints * numcelly + 2*(int)scaleVtk + 1;
 	// int dimz = npoints * numcellz + 2*(int)scaleVtk + 1;
-	int dimx = npoints * numcellx + 1;
-	int dimy = npoints * numcelly + 1;
-	int dimz = npoints * numcellz + 1;
+	int dimx = npoints * numcellx + 50;
+	int dimy = npoints * numcelly + 50;
+	int dimz = npoints * numcellz + 50;
 	int dimension = max({dimx, dimy, dimz});
 
 	const float pi2 = 2 * 3.14159265358979323846 / npoints;
