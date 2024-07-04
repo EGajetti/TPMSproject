@@ -194,11 +194,11 @@ vtkNew<vtkPolyDataBooleanFilter> Tpms::TpmsIntersect(){
 
 
 // void Tpms::TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate) {
-	void Tpms::TpmsWriteToSTL(const char* filename, vtkPolyDataBooleanFilter* intersezione) {
+	void Tpms::TpmsWriteToSTL(const string filename, vtkPolyDataBooleanFilter* intersezione) {
 	vtkNew<vtkSTLWriter> writer;
 	// writer->SetInputData(decimate->GetOutput());
 	writer->SetInputData(intersezione->GetOutput());
-	writer->SetFileName(filename);
+	writer->SetFileName(filename.c_str());
 	writer->SetFileTypeToBinary();
 	writer->Update();
 }

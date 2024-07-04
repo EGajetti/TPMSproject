@@ -21,7 +21,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	string* var_value;
-	char* out_file;
+	string out_file;
 
 	if (argc == 3) {
 		var_value = readConfiguration(argv[1]);

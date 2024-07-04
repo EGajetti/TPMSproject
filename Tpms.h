@@ -90,7 +90,7 @@ public:
 	*  @param filename Output filename
 	*/
 	// void TpmsWriteToSTL(const char* filename, vtkQuadricDecimation* decimate);
-	void TpmsWriteToSTL(const char* filename, vtkPolyDataBooleanFilter* intersezione);
+	void TpmsWriteToSTL(const string filename, vtkPolyDataBooleanFilter* intersezione);
 
 
 
