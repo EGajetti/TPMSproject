@@ -10,5 +10,9 @@ Type = solid
 Target size = 10
 
 # Level set constant c
+<<<<<<< HEAD
 C value =  0.4855
+=======
+C value = 0.3
+>>>>>>> f77969f10398d68692a8c80f1a22e974263ebfba
 

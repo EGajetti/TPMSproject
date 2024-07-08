@@ -7,6 +7,7 @@
 #include <vtkIntersectionPolyDataFilter.h>
 #include <vtkSTLWriter.h>
 
+
 #include "Definition.h"
 #include "Utils.h"
 #include "Tpms.h"
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
 	// Input
 
 	// int nFinal = stoi(var_value[0]);
-	int nFinal = 150;
+	int nFinal = 130;
 
 	char TPMSname = var_value[0][0];
 	string type = var_value[1];
@@ -57,8 +58,11 @@ int main(int argc, char* argv[])
 	float tarSize = stof(var_value[2]);
 
 	// double* origin = convertOrigin(var_value[3]);
-	double trasla = (tarSize + 1.0)/nFinal;
+	// double trasla = (tarSize + 1.0)/nFinal;
+	double trasla = 50./nFinal*tarSize/2.;
+	// double origin[3] = {-numCellX*tarSize/2.0 - trasla, -numCellY*tarSize/2.0 - trasla, -numCellZ*tarSize/2.0 - trasla};
 	double origin[3] = {-numCellX*tarSize/2.0 - trasla, -numCellY*tarSize/2.0 - trasla, -numCellZ*tarSize/2.0 - trasla};
+
 	float rvalue = stof(var_value[3]);
 
 	// Vtk objects
@@ -82,6 +86,7 @@ int main(int argc, char* argv[])
 
 	// vtkNew<vtkLinearSubdivisionFilter> boxRefined = tpms_final.TpmsBox(tarSize, origin);
 	// vtkNew<vtkStaticCleanPolyData> fluidTPMS = tpms_final.TpmsFluid(finalTPMS, boxRefined, tarSize);
+
 
 	// Saving to .stl file
 	tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
