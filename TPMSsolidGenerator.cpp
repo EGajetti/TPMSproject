@@ -121,9 +121,9 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 		for (int z = 0; z < dimz; z++)
 			for (int y = 0; y < dimy; y++)
 				for (int x = 0; x < dimx; x++) {
-					scal = 1.1*(sen2[x]*senv[z]*cosv[y] + sen2[y]*senv[x]*cosv[z] + sen2[z]*senv[y]*cosv[x])
+					scal = -(1.1*(sen2[x]*senv[z]*cosv[y] + sen2[y]*senv[x]*cosv[z] + sen2[z]*senv[y]*cosv[x])
 							- 0.2*(cos2[x]*cos2[y] + cos2[y]*cos2[z] + cos2[z]*cos2[x]) 
-							- 0.4*(cos2[x] + cos2[y] + cos2[z]) - rvalue;
+							- 0.4*(cos2[x] + cos2[y] + cos2[z])) - rvalue;
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;
