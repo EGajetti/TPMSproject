@@ -30,7 +30,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 	float* cos2 = new float[dimension];
 	float* sen2 = new float[dimension];
 	
-	if ((type == 'I') || (type == 'S') || (type == 'F') || (type == 'K'))
+	if ((type == 'I') || (type == 'S') || (type == 'F') || (type == 'K') || (type == 'L'))
 		for (int i = 0; i < dimension; i++)
 		{
 			cos2[i] = cos(2 * pi2 * i);
@@ -126,7 +126,7 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 				for (int x = 0; x < dimx; x++) {
 					scal = -(1.1*(sen2[x]*senv[z]*cosv[y] + sen2[y]*senv[x]*cosv[z] + sen2[z]*senv[y]*cosv[x])
 							- 0.2*(cos2[x]*cos2[y] + cos2[y]*cos2[z] + cos2[z]*cos2[x]) 
-							- 0.4*(cos2[x] + cos2[y] + cos2[z])) - rvalue;
+							- 0.4*(cos2[x] + cos2[y] + cos2[z]) - rvalue);
 					float* a = static_cast<float*> (volume->GetScalarPointer(x, y, z));
 					*a = scal;
 					temp++;

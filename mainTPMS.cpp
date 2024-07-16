@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	// Input
 
 	// int nFinal = stoi(var_value[0]);
-	int nFinal = 130;
+	int nFinal = 100;
 
 	char TPMSname = var_value[0][0];
 	string type = var_value[1];
