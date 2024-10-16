@@ -49,9 +49,9 @@ int main(int argc, char* argv[])
 
 	float tarSize = stof(var_value[2]);
 
-	int numCellX = stoi(var_value[3]);
-	int numCellY = stoi(var_value[4]);
-	int numCellZ = stoi(var_value[5]);
+	int numCellX = stoi(var_value[4]);
+	int numCellY = stoi(var_value[5]);
+	int numCellZ = stoi(var_value[6]);
 
 	// double* origin = convertOrigin(var_value[3]);
 	// double trasla = (tarSize + 1.0)/nFinal;
