@@ -1,7 +1,7 @@
 # Configuration file for TPMS generator
 
 # TPMS type: P, G, D, I, S, F, N, L, K
-TPMSType = D
+TPMSType = G
 
 # TPMS type: solid, sheet 
 Type = solid
@@ -10,9 +10,14 @@ Type = solid
 Target size = 10
 
 # Level set constant c
-<<<<<<< HEAD
-C value =  0.4855
-=======
-C value = 0.3
->>>>>>> f77969f10398d68692a8c80f1a22e974263ebfba
+C value =  0.1
+
+# Number of cells in x direction
+Nx cells = 1
+
+# Number of cells in y direction
+Ny cells = 5
+
+# Number of cells in y direction
+Nz cells = 1
 

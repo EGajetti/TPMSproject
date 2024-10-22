@@ -42,20 +42,16 @@ int main(int argc, char* argv[])
 	// Input
 
 	// int nFinal = stoi(var_value[0]);
-	int nFinal = 130;
+	int nFinal = 100;
 
 	char TPMSname = var_value[0][0];
 	string type = var_value[1];
 
-	// int numCellX = stoi(var_value[3]);
-	// int numCellY = stoi(var_value[4]);
-	// int numCellZ = stoi(var_value[5]);
-
-	int numCellX = 1;
-	int numCellY = 1;
-	int numCellZ = 1;
-
 	float tarSize = stof(var_value[2]);
+
+	int numCellX = stoi(var_value[4]);
+	int numCellY = stoi(var_value[5]);
+	int numCellZ = stoi(var_value[6]);
 
 	// double* origin = convertOrigin(var_value[3]);
 	// double trasla = (tarSize + 1.0)/nFinal;
