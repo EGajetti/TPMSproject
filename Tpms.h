@@ -65,12 +65,12 @@ public:
 	/**
 	 * \brief Cleaning the mesh after isosurface
 	*/
-	vtkNew <vtkStaticCleanPolyData> TpmsClean();
+	vtkNew<vtkStaticCleanPolyData> TpmsClean();
 
 	/**
 	 * \brief Reducing mesh size
 	*/
-	vtkNew <vtkQuadricDecimation> TpmsQuadricDecimation();
+	vtkNew<vtkQuadricDecimation> TpmsQuadricDecimation();
 
 	/**
 	 * \brief Create a box L x L x L
@@ -82,7 +82,7 @@ public:
 	/**
 	 * \brief Transform the geometry (i.e. rotating and translating)
 	*/
-	vtkNew<vtkTransformPolyDataFilter> TpmsTransform();
+	vtkNew<vtkTransformPolyDataFilter> TpmsTransform(vtkQuadricDecimation* decimateCubo, double* angles);
 
 	/**
 	 * \brief Clean the geometry after intersection and difference

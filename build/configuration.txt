@@ -13,11 +13,17 @@ Target size = 10
 C value =  0.1
 
 # Number of cells in x direction
-Nx cells = 1
+Nx cells = 2
 
 # Number of cells in y direction
-Ny cells = 5
+Ny cells = 2
 
 # Number of cells in y direction
-Nz cells = 1
+Nz cells = 2
+
+# Rotate the TPMS
+Rotate = 1
+
+# Rotate the TPMS
+Angles = [-45, 0, 0]
 

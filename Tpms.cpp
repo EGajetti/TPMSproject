@@ -40,7 +40,6 @@ Tpms::Tpms(int npoints, float scalevtk, int numcellx, int numcelly, int numcellz
 Tpms::~Tpms() {}
 
 
-
 //--------- Class methods --------------//
 
 #ifdef USE_FLYING_EDGES
@@ -145,17 +144,29 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 	return decimate;
 }
 
-
-// vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform() {
-// 	vtkNew<vtkQuadricDecimation> decimateCubo = TpmsQuadricDecimation();
-// 	vtkNew<vtkTransform> trasformazione;
-// 	trasformazione->Translate(-numCellX*scaleVtk/2.0, -numCellY*scaleVtk/2.0, -numCellZ*scaleVtk/2.0);
-// 	vtkNew<vtkTransformPolyDataFilter> trasformaCubo;
-// 	trasformaCubo->SetTransform(trasformazione);
-// 	trasformaCubo->SetInputData(decimateCubo->GetOutput());
-// 	trasformaCubo->Update();
-// 	return trasformaCubo;
-// }
+vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform(vtkQuadricDecimation* decimateCubo,double* angles) {
+	// double axes[3][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
+	vtkNew<vtkTransform> trasformazione;
+	// for (int i = 0; i < 3; i++) {
+	// 	if (angles[i] != 0.0) {
+	// 		trasformazione->RotateWXYZ(angles[0], static_cast<float>);
+	// 	}
+	// }
+	if (angles[0] != 0.0) {
+		trasformazione->RotateX(angles[0]);
+	}
+	if (angles[1] != 0.0) {
+		trasformazione->RotateY(angles[1]);
+	}
+	if (angles[2] != 0.0) {
+		trasformazione->RotateZ(angles[2]);
+	}
+	vtkNew<vtkTransformPolyDataFilter> ruotaCubo;
+	ruotaCubo->SetTransform(trasformazione);
+	ruotaCubo->SetInputData(decimateCubo->GetOutput());
+	ruotaCubo->Update();
+	return ruotaCubo;
+}
 
 vtkNew<vtkStaticCleanPolyData> Tpms::TpmsCleanBoolOper(vtkBooleanOperationPolyDataFilter* boolTPMS){
 	vtkNew<vtkStaticCleanPolyData> finalTPMS;

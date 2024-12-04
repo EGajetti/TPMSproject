@@ -43,26 +43,30 @@ int main(int argc, char* argv[])
 
 	// int nFinal = stoi(var_value[0]);
 	int nFinal = 100;
-
+	// TPMS topology
 	char TPMSname = var_value[0][0];
+	// sheet or solid type
 	string type = var_value[1];
-
+	// Target size
 	float tarSize = stof(var_value[2]);
-
+	// f(x,y,z) = rvalue
+	float rvalue = stof(var_value[3]);
+	// Num cells along x,y,z directions
 	int numCellX = stoi(var_value[4]);
 	int numCellY = stoi(var_value[5]);
 	int numCellZ = stoi(var_value[6]);
 
 	// double* origin = convertOrigin(var_value[3]);
 	// double trasla = (tarSize + 1.0)/nFinal;
+	// To have the TPMS centered in (0,0,0)
 	double trasla = 50./nFinal*tarSize/2.;
 	// double origin[3] = {-numCellX*tarSize/2.0 - trasla, -numCellY*tarSize/2.0 - trasla, -numCellZ*tarSize/2.0 - trasla};
 	double origin[3] = {-numCellX*tarSize/2.0 - trasla, -numCellY*tarSize/2.0 - trasla, -numCellZ*tarSize/2.0 - trasla};
 
-	float rvalue = stof(var_value[3]);
+	// Boolean to rotate the TPMS
+	bool ruota = stoi(var_value[7]);	
 
-	// Vtk objects
-
+	// VTK objects
 	vtkNew<vtkImageData> volume;
 #ifdef USE_FLYING_EDGES
 	vtkNew<vtkFlyingEdges3D> surface;
@@ -70,23 +74,27 @@ int main(int argc, char* argv[])
 	vtkNew<vtkMarchingCubes> surface;
 #endif
 
-	// Generation of the final TPMS lattice object
-
+	// Generation of the  TPMS lattice object
 	Tpms tpms_final(nFinal, tarSize, numCellX, numCellY, numCellZ, TPMSname, origin, rvalue);
 	tpms_final.SetVtkObjects(volume, surface);
 	tpms_final.TpmsSet(type);
 
-	
-	// vtkNew<vtkTransformPolyDataFilter> finalTPMS = tpms_final.TpmsTransform();
 	vtkNew<vtkQuadricDecimation> finalTPMS = tpms_final.TpmsQuadricDecimation();
+
+	if (ruota) {
+		double* angles = convertOrigin(var_value[8]);
+		vtkNew<vtkTransformPolyDataFilter> rotateTPMS = tpms_final.TpmsTransform(finalTPMS, angles);
+		// Saving to .stl file
+		tpms_final.TpmsWriteToSTL(out_file,rotateTPMS);
+
+	}
+	else {
+		// Saving to .stl file
+		tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
+	}
 
 	// vtkNew<vtkLinearSubdivisionFilter> boxRefined = tpms_final.TpmsBox(tarSize, origin);
 	// vtkNew<vtkStaticCleanPolyData> fluidTPMS = tpms_final.TpmsFluid(finalTPMS, boxRefined, tarSize);
-
-
-	// Saving to .stl file
-	tpms_final.TpmsWriteToSTL(out_file,finalTPMS);
-
 
 
 	// Printing execution time

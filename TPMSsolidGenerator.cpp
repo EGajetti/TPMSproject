@@ -20,12 +20,15 @@ void TpmsSolidGenerator(const int npoints, const int numcellx, const int numcell
 	float scal = 0.;
 
 	float* cosv = new float[dimension];
-	for (int i = 0; i < dimension; i++)
+	for (int i = 0; i < dimension; i++) {
 		cosv[i] = cos(pi2 * i);
+	}
 
 	float* senv = new float[dimension];
-	for (int i = 0; i < dimension; i++)
+
+	for (int i = 0; i < dimension; i++) {
 		senv[i] = sin(pi2 * i);
+	}
 
 	float* cos2 = new float[dimension];
 	float* sen2 = new float[dimension];
