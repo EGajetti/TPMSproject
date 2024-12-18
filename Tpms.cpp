@@ -145,13 +145,7 @@ vtkNew<vtkQuadricDecimation> Tpms::TpmsQuadricDecimation(){
 }
 
 vtkNew<vtkTransformPolyDataFilter> Tpms::TpmsTransform(vtkQuadricDecimation* decimateCubo,double* angles) {
-	// double axes[3][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
 	vtkNew<vtkTransform> trasformazione;
-	// for (int i = 0; i < 3; i++) {
-	// 	if (angles[i] != 0.0) {
-	// 		trasformazione->RotateWXYZ(angles[0], static_cast<float>);
-	// 	}
-	// }
 	if (angles[0] != 0.0) {
 		trasformazione->RotateX(angles[0]);
 	}
