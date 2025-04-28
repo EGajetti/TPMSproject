@@ -11,9 +11,8 @@ CMakeCache.txt
 *.stl
 compile_commands.json
 build.ninja
-./mainTPMS
 /lib
 /.cmake
 /vtkbool
-Makefile
+
 

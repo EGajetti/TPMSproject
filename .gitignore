@@ -2,7 +2,4 @@
 vtk9.def
 vtk9.img
 build/Makefile
-<<<<<<< HEAD
-=======
 build/mainTPMS
->>>>>>> fe487263bc1d39aeaa79ee911104880def0d63bf
