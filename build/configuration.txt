@@ -10,20 +10,20 @@ Type = solid
 Target size = 10
 
 # Level set constant c
-C value = -0.04998
+C value = 0.618
 
 # Number of cells in x direction
 Nx cells = 1
 
 # Number of cells in y direction
-Ny cells = 2
+Ny cells = 1
 
 # Number of cells in y direction
-Nz cells = 2
+Nz cells = 1
 
 # Rotate the TPMS
-Rotate = 1
+Rotate = 0
 
 # Rotate the TPMS
-Angles = [45, 0, 0]
+Angles = [0, 0, 0]
 
